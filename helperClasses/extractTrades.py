@@ -1,11 +1,13 @@
 import pandas as pd
 from config import DATA_DIR
 import os
-
-full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', 'allTrades.csv')
+import json
+from helperClasses.getTradeLogPath import get_full_tradelog_path
 
 
 def extract_trades(identifier):
+    full_tradelog_path = get_full_tradelog_path()
+
     df = pd.read_csv(full_tradelog_path)
 
     # Filter the DataFrame to only include rows where 'Identifier' matches the identifier

@@ -21,8 +21,8 @@ class TradeLog:
         # Can change order if needed
         trades_data = [
             {'Identifier': trade.identifier, 'TimePeriod': trade.time_period, 'Strategy': trade.strategy, 'Symbol': trade.symbol, 'StartDate': f"{trade.start_date}",
-             'StartTime': f'{trade.start_time}', 'EndDate': f"{trade.end_date}", 'EndTime': f'{trade.end_time}', 'Enter Price': round(trade.enter_price, 2),
-             'Exit Price': round(trade.exit_price, 2), 'Trade Type': trade.trade_type,
+             'StartTime': f'{trade.start_time}', 'EndDate': f"{trade.end_date}", 'EndTime': f'{trade.end_time}', 'EnterPrice': round(trade.enter_price, 2),
+             'ExitPrice': round(trade.exit_price, 2), 'TradeType': trade.trade_type,
              'Leverage': trade.leverage, 'PnL': round(trade.pnl, 5)}
             for trade in self.trades
         ]

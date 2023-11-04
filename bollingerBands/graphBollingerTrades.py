@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from helperClasses.extractTrades import extract_trades
 import pandas as pd
-
+import matplotlib.patches as mpatches
 
 def graph_window(start_day, end_day):
     # Load the Bollinger Bands data
@@ -34,8 +34,7 @@ def graph_window(start_day, end_day):
     for _, trade in trades.iterrows():
         enter_day = trade['StartDate']
         exit_day = trade['EndDate']
-        trade_type = trade['Trade Type']
-        print(trade['PnL'])
+        trade_type = trade['TradeType']
 
         enter_price = df_boll.loc[df_boll['Day'] == enter_day, 'Close'].values[0]
         exit_price = df_boll.loc[df_boll['Day'] == exit_day, 'Close'].values[0]
@@ -49,9 +48,24 @@ def graph_window(start_day, end_day):
             plt.scatter(enter_day, enter_price, color='red', zorder=5)
             plt.scatter(exit_day, exit_price, color='darkred', zorder=5)
 
-    plt.ylabel('Bollinger Bands')
+    # Create legend patches
+    enter_long_patch = mpatches.Patch(color='green', label='Enter Long')
+    exit_long_patch = mpatches.Patch(color='darkgreen', label='Exit Long')
+    enter_short_patch = mpatches.Patch(color='red', label='Enter Short')
+    exit_short_patch = mpatches.Patch(color='darkred', label='Exit Short')
+
+    # Get existing plot labels and handles
+    handles, labels = plt.gca().get_legend_handles_labels()
+
+    # Add custom patches
+    handles.extend([enter_long_patch, exit_long_patch, enter_short_patch, exit_short_patch])
+
+    # Create combined legend
+    plt.legend(handles=handles, loc='upper left')
+
+    plt.ylabel('Return Close')
     plt.xlabel('Day')
-    plt.legend()
+    plt.title('AAPL Bollinger Bands and Trades')
     plt.tight_layout()
     plt.show()
 

@@ -1,11 +1,9 @@
 import pandas as pd
-from config import DATA_DIR
-import os
-
-full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', 'allTrades.csv')
-
+from getTradeLogPath import get_full_tradelog_path
 
 def remove_trades(identifier):
+    full_tradelog_path = get_full_tradelog_path()
+
     df = pd.read_csv(full_tradelog_path)
 
     # Filter out the rows where 'Identifier' column matches the identifier

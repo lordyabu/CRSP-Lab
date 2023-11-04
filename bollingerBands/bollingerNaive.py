@@ -2,6 +2,7 @@ import pandas as pd
 from traderBasic import StockAlgorithmDaily
 from config import DATA_DIR
 import os
+import json
 
 class BollingerNaive(StockAlgorithmDaily):
 
@@ -62,7 +63,7 @@ class BollingerNaive(StockAlgorithmDaily):
         lower_band_3sd = self.df.iloc[self.step][f'Lower_Band_3SD_{self.band_data}']
         middle_band = self.df.iloc[self.step][f'Middle_Band_{self.band_data}']
 
-        curr_close = self.df.iloc[self.step]['Close']
+        curr_close = self.df.iloc[self.step]['Return'] + 1
 
         if self.curr_price != None:
             self.curr_price *= curr_close
@@ -258,8 +259,21 @@ class BollingerNaive(StockAlgorithmDaily):
         # Get the trade log DataFrame
         df = self.trade_log.get_trade_dataframe()
 
-        # Path to the full trade log CSV
-        full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', 'allTrades.csv')
+        data_dir = os.path.join(DATA_DIR, 'helperData')
+
+        # Read the JSON file
+        json_file_path = os.path.join(data_dir, 'valid_stock_filenames.json')
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
+
+        # Extract start_date and end_date
+        start_date = data.get('start_date').replace('Day_', '')
+        end_date = data.get('end_date').replace('Day_', '')
+        print(f"Start Date: {start_date}, End Date: {end_date}")
+
+        # Construct the filename with the start and end dates
+        filename = f"allTrades_{start_date}_to_{end_date}.csv"
+        full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', filename)
 
         # Check if the full trade log CSV already exists
         if os.path.exists(full_tradelog_path):
@@ -273,4 +287,3 @@ class BollingerNaive(StockAlgorithmDaily):
 
         # Save the updated trade log
         updated_tradelog_df.to_csv(full_tradelog_path, index=False)
-
