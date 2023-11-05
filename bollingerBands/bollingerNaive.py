@@ -2,6 +2,7 @@ import pandas as pd
 from traderBasic import StockAlgorithmDaily
 from config import DATA_DIR
 import os
+from helperClasses.getTradeLogPath import get_full_tradelog_path
 import json
 
 class BollingerNaive(StockAlgorithmDaily):
@@ -74,6 +75,7 @@ class BollingerNaive(StockAlgorithmDaily):
         band_entry = self.band_entry_type
 
 
+        # If moving stop loss
         if position_type == 'long':
             stop_loss_price = lower_band_3sd
             target_price = middle_band
@@ -83,6 +85,10 @@ class BollingerNaive(StockAlgorithmDaily):
         else:
             stop_loss_price = None
             target_price = None
+        # If not:
+
+        # TODO
+        # Implement
 
 
         state_vars = {
@@ -116,30 +122,38 @@ class BollingerNaive(StockAlgorithmDaily):
         stop_loss_price = curr_state['StopLossPrice']
         target_price = curr_state['TargetPrice']
 
+        action_str = ''
+
         # If in position (long or short)
         if position_type in ['long', 'short']:
             # If price has crossed the middle band, exit position
             if (position_type == 'long' and close >= target_price) or \
                (position_type == 'short' and close <= target_price):
-                self.exit_position()  # You'll need to implement this
+                action_str = self.exit_position()  # You'll need to implement this
             # Elif price is past stop loss
             elif (position_type == 'long' and close < stop_loss_price) or \
                     (position_type == 'short' and close > stop_loss_price):
-                self.exit_position()
+                action_str = self.exit_position()
             else:
+                action_str = 'Hold'
                 self.actions.append(0)
         # If not in a position
         elif position_type is None:
             # If action is triggered by price touching the lower or upper band, start position
             if close <= lower_band:
+                action_str = 'EnterLong'
                 self.start_position('long')  # You'll need to implement this
             elif close >= upper_band:
+                action_str = 'EnterShort'
                 self.start_position('short')  # You'll need to implement this
             else:
+                action_str = 'Wait'
                 self.actions.append(0)
         else:
             raise ValueError(f"Invalid position type {position_type}.")
 
+
+        return action_str
         # If in action (position type != None)
         #    If price has crosses middle band
         #       exit (and save to trade log)
@@ -150,6 +164,8 @@ class BollingerNaive(StockAlgorithmDaily):
         #        Start action
         #    Else
         #        Do nothing
+
+
 
     def start_position(self, action):
         if action == 'long':
@@ -226,8 +242,10 @@ class BollingerNaive(StockAlgorithmDaily):
 
         if trade_type == 'long':
             self.actions.append(2)
+            return_str = 'EndLong'
         elif trade_type == 'short':
             self.actions.append(-2)
+            return_str = 'EndShort'
         else:
             raise ValueError(f"Invalid position type {trade_type}.")
 
@@ -248,7 +266,7 @@ class BollingerNaive(StockAlgorithmDaily):
 
         self.leverage = 1
 
-
+        return return_str
 
 
     def update_step(self, new_step):
@@ -259,21 +277,7 @@ class BollingerNaive(StockAlgorithmDaily):
         # Get the trade log DataFrame
         df = self.trade_log.get_trade_dataframe()
 
-        data_dir = os.path.join(DATA_DIR, 'helperData')
-
-        # Read the JSON file
-        json_file_path = os.path.join(data_dir, 'valid_stock_filenames.json')
-        with open(json_file_path, 'r') as json_file:
-            data = json.load(json_file)
-
-        # Extract start_date and end_date
-        start_date = data.get('start_date').replace('Day_', '')
-        end_date = data.get('end_date').replace('Day_', '')
-        print(f"Start Date: {start_date}, End Date: {end_date}")
-
-        # Construct the filename with the start and end dates
-        filename = f"allTrades_{start_date}_to_{end_date}.csv"
-        full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', filename)
+        full_tradelog_path = get_full_tradelog_path()
 
         # Check if the full trade log CSV already exists
         if os.path.exists(full_tradelog_path):

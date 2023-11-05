@@ -74,26 +74,31 @@ class BollingerBands:
 
 
     def calculate_individual_bands(self, stock_name):
-        file_path = os.path.join(self.data_directory, f"{stock_name}.csv")
+        file_path = os.path.join(self.data_directory, f"{stock_name}")
+
+        # print(file_path)
 
         if os.path.exists(file_path):
             df = pd.read_csv(file_path)
 
             upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band = self.calculate_bollinger_bands(df)
-            BollingerBands.plot_bollinger_bands(df, upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band)
+            # BollingerBands.plot_bollinger_bands(df, upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band)
 
             # Add the bands to the DataFrame
-            df[f'Lower_Band_{self.name}'] = lower_band
-            df[f'Upper_Band_{self.name}'] = upper_band
-            df[f'Lower_Band_3SD_{self.name}'] = lower_band_3sd
-            df[f'Upper_Band_3SD_{self.name}'] = upper_band_3sd
-            df[f'Middle_Band_{self.name}'] = middle_band
+            try:
+                df[f'Lower_Band_{self.name}'] = lower_band
+                df[f'Upper_Band_{self.name}'] = upper_band
+                df[f'Lower_Band_3SD_{self.name}'] = lower_band_3sd
+                df[f'Upper_Band_3SD_{self.name}'] = upper_band_3sd
+                df[f'Middle_Band_{self.name}'] = middle_band
+            except:
+                return
 
             # Save the DataFrame back to CSV
-            save_path = os.path.join(self.save_dir, f"{stock_name}.csv")
+            save_path = os.path.join(self.save_dir, f"{stock_name}")
             df.to_csv(save_path, index=False)
 
-            print(f"Bollinger Bands calculated, plotted, and saved for {stock_name}.")
+            # print(f"Bollinger Bands calculated, plotted, and saved for {stock_name}.")
         else:
             print(f"The file for {stock_name} does not exist in the directory.")
 
@@ -103,6 +108,8 @@ class BollingerBands:
         filenames = [f for f in os.listdir(self.data_directory) if f.endswith('.csv')]
         num_workers = 8
 
+        # print(filenames)
+
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             list(tqdm(executor.map(self.calculate_individual_bands, filenames), total=len(filenames)))
 
@@ -110,7 +117,7 @@ class BollingerBands:
 
 
 # Usage:
-directory = os.path.join(DATA_DIR, 'dataDailyTwoCol')
-bollinger = BollingerBands(data_directory=directory)
-bollinger.calculate_individual_bands('AAPL')
+# directory = os.path.join(DATA_DIR, 'dataDailyTwoCol')
+# bollinger = BollingerBands(data_directory=directory)
+# bollinger.calculate_individual_bands('AAPL')
 # bollinger.calculate_all_bands()

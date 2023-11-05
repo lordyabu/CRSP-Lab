@@ -100,6 +100,7 @@ class StockAlgorithmDaily(ABC):
         if f'{self.stock_name}.csv' in valid_filenames:
             file_path = os.path.join(DATA_DIR, f'{file_dir}', f'{self.stock_name}.csv')
             data = pd.read_csv(file_path)
+
             data['Date'] = pd.to_datetime(data['Day'].str.replace('Day_', ''), format='%Y%m%d')
 
             # Filter data based on date range
