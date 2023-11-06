@@ -5,7 +5,7 @@ import json
 from helperClasses.getTradeLogPath import get_full_tradelog_path
 
 
-def extract_trades(identifier, sort_by='EndDate'):
+def extract_trades(identifier, sort_by='EndDate', stock_name=None):
     full_tradelog_path = get_full_tradelog_path()
 
     df = pd.read_csv(full_tradelog_path)
@@ -16,6 +16,9 @@ def extract_trades(identifier, sort_by='EndDate'):
 
     # Filter the DataFrame to only include rows where 'Identifier' matches the identifier
     df_filtered = df[df['Identifier'] == identifier]
+
+    if stock_name:
+        df_filtered = df_filtered[df_filtered['Symbol'] == stock_name]
 
     # Sort the filtered DataFrame based on the 'sort_by' column
     df_sorted = df_filtered.sort_values(by=sort_by)

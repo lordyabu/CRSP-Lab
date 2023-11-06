@@ -12,9 +12,7 @@ def graph_window(start_day, end_day):
     df_boll = df_boll[(df_boll['Day'] >= start_day) & (df_boll['Day'] <= end_day)]
 
     # Extract trades
-    trades = extract_trades('test1')
-    trades['StartDate'] = pd.to_datetime(trades['StartDate'].str.replace('Day_', ''), format='%Y%m%d')
-    trades['EndDate'] = pd.to_datetime(trades['EndDate'].str.replace('Day_', ''), format='%Y%m%d')
+    trades = extract_trades('test1', stock_name='AAPL')
 
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_day) & (trades['EndDate'] <= end_day)]
