@@ -2,6 +2,7 @@
 
 This documentation provides an overview of the `BollingerNaive` class and the associated `BollingerBands` class used for implementing a simple trading algorithm based on Bollinger Bands.
 
+![Screenshot (54)](https://github.com/lordyabu/CRSP-Ensemble-Lab/assets/92772420/261112b8-7bd5-4184-a1e6-283f8962724d)
 
 
 

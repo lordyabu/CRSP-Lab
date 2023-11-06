@@ -1,1 +1,1 @@
-stock_to_check = 'FNLC'
+stock_to_check = 'VAR'
