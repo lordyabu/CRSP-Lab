@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import json
 import warnings
+from configBT import stock_to_check
 warnings.filterwarnings('ignore')
 from bollingerBands.backTesting import BollingerNaiveStrategy
 
@@ -52,5 +53,5 @@ def main(stock_name):
 
 
 if __name__ == '__main__':
-    stock_name = "AAPL"
+    stock_name = stock_to_check
     main(stock_name)

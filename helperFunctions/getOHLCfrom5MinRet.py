@@ -4,39 +4,62 @@ import os
 import json
 from config import DATA_DIR
 from tqdm import tqdm
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 
-directory = os.path.join(DATA_DIR, 'dataDailyTwoCol')
-save_directory = os.path.join(DATA_DIR, 'dataDailyTwoCol')
+directory = os.path.join(DATA_DIR, 'priceData')
+save_directory = os.path.join(DATA_DIR, 'priceDataOHLC')
 five_min_directory = os.path.join(DATA_DIR, 'dataFiveMin', '.csv')
 
 
-def calculate_ohlc(day, stock_name=None, actual_price=None, args=None):
-    file_path = os.path.join(five_min_directory, f"{day}.csv")
-    df = pd.read_csv(file_path, usecols=[stock_name])
+def calculate_ohlc(date, stock_name=None, actual_price=None, actual_end_price=None, args=None):
+    try:
+        file_path = os.path.join(five_min_directory, f"Day_{date}.csv")
+        df = pd.read_csv(file_path, usecols=[stock_name])
 
-    if not actual_price:
-        curr_price = 1
-    else:
-        curr_price = actual_price
+        if not actual_price:
+            curr_price = 1
+        else:
+            curr_price = actual_price
 
-    # Convert the returns to a NumPy array and handle NaN values
-    returns = df[f'{stock_name}'].to_numpy()
-    returns = np.nan_to_num(returns)  # Replace NaN with 0
+        # Convert the returns to a NumPy array and handle NaN values
+        returns = df[f'{stock_name}'].to_numpy()
+        returns = np.nan_to_num(returns)  # Replace NaN with 0
 
-    prices = curr_price * np.cumprod(1 + returns)
+        prices = curr_price * np.cumprod(1 + returns)
 
-    # Calculate OHLC using the price series
-    open_price = round(prices[0], 10)
-    high_price = round(np.max(prices), 10)
-    low_price = round(np.min(prices), 10)
-    close_price = round(prices[-1], 10)  # Adjust the close price calculation
+        # Calculate OHLC using the price series
+        # ///////////////////////////// OLD
+        # open_price = round(prices[0], 10)
+        # open_price = actual_price
+        # high_price = round(np.max(prices), 10)
+        # low_price = round(np.min(prices), 10)
+        # close_price = round(prices[-1], 10)  # Adjust the close price calculation
+        # //////////////////////////// OLD
 
-    return open_price, high_price, low_price, close_price
+        high_price = round(np.max(prices), 10)
+        low_price = round(np.min(prices), 10)
+
+        open_price = actual_price
+
+        # Ensure the close price is not higher than the high or lower than the low
+        close_price = actual_end_price
+
+        # Replace high and low prices if the open or close prices are outside the current range
+        high_price = max(high_price, open_price, close_price)
+        low_price = min(low_price, open_price, close_price)
+
+        return open_price, high_price, low_price, close_price
+    except Exception as e:
+        #print(f"An error occurred on line {traceback.format_exc().strip().splitlines()[-1]}")
+        #print("Something wrong so just gonna use Open / Close", date)
+        return actual_price, max(actual_price, actual_end_price), min(actual_price, actual_end_price), actual_end_price
 
 def get_individual_ohlc(stock_name: str):
     # Construct the file path for the stock's CSV file
     file_path = os.path.join(directory, f"{stock_name}.csv")
+
+    save_path = os.path.join(save_directory, f"{stock_name}.csv")
 
     # Check if the file exists
     if os.path.exists(file_path):
@@ -46,11 +69,15 @@ def get_individual_ohlc(stock_name: str):
         # Initialize lists to hold OHLC values
         opens, highs, lows, closes = [], [], [], []
 
-        # Enumerate over the 'Day' column
-        for day in df['Day']:
-            # print(day)
-            # Calculate OHLC using your custom function (replace with the actual logic)
-            open, high, low, close = calculate_ohlc(day, stock_name=stock_name)
+        # Use .iterrows() to iterate over DataFrame rows as (index, Series) pairs
+        for index, row in df.iterrows():
+            # Use 'date' and 'OPENPRC' from the row to calculate OHLC
+            open, high, low, close = calculate_ohlc(row['date'], stock_name=stock_name, actual_price=row['OPENPRC'], actual_end_price=row['PRC'])
+            if stock_name == 'AAL':
+                # print(open, high, low, close)
+
+                if low > close:
+                    print("HOW IS THIS POSSIBLE")
 
             # Append the values to the lists
             opens.append(open)
@@ -65,7 +92,7 @@ def get_individual_ohlc(stock_name: str):
         df['Close'] = closes
 
         # Save the updated DataFrame back to the CSV file
-        df.to_csv(file_path, index=False)
+        df.to_csv(save_path, index=False)
         print(f"OHLC data added and saved for {stock_name}.")
     else:
         print(f"The file for {stock_name} does not exist in the directory.")
@@ -81,13 +108,15 @@ def get_all_ohlc(directory):
 
     # Function to process a single file
     def process_file(filename):
-        nonlocal start_processing  # Refer to the outer scope variable
+        # nonlocal start_processing  # Refer to the outer scope variable
         stock_name = filename.replace('.csv', '')  # Remove the extension to get the stock name
 
-        if stock_name == "FPFC":
-            start_processing = True
-
+        # if stock_name == "A":
+        #     print('starting')
+        #     start_processing = True
+        start_processing = True
         if start_processing:
+            print(f"Starting {stock_name}")
             get_individual_ohlc(stock_name)  # Call the function with the stock name
 
     # Number of threads to use (you can adjust this based on your system's capabilities)
@@ -96,7 +125,7 @@ def get_all_ohlc(directory):
     # Create a ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         # Use tqdm for progress bar, starting from the file where "ACLA" is found
-        list(tqdm(executor.map(process_file, filenames), total=len(filenames), initial=filenames.index('ACLA.csv')))
+        list(tqdm(executor.map(process_file, filenames), total=len(filenames), initial=filenames.index('A.csv')))
 
 
 def get_all_ohlc_normal(directory):
