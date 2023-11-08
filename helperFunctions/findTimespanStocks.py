@@ -62,4 +62,4 @@ def save_stock_filenames_in_timespan_daily(start='20100104', end='20201231', exc
 
 
 # Usage
-save_stock_filenames_in_timespan_daily(exclude_nan=True)
+save_stock_filenames_in_timespan_daily(exclude_nan=False)
