@@ -1,6 +1,4 @@
-import pandas as pd
-
-from bollingerNaive import BollingerNaive
+from src.bollingerBands.bollingerNaive import BollingerNaive
 
 
 
@@ -9,7 +7,8 @@ def run_stuffs():
 
     while boll.step != len(boll.df.index):
         state = boll.get_state()
-        boll.get_and_process_action(state)
+        action = boll.get_action(state)
+        boll.process_action(action)
 
         boll.update_step(boll.step + 1)
 

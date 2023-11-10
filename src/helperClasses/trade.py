@@ -29,11 +29,17 @@ class Trade:
         else:
             raise ValueError("Trade type must be either 'long' or 'short'")
 
+
+    @property
+    def pnl_percent(self):
+        # PnL as a percentage of the enter price
+        return (self.pnl / self.enter_price) * 100
+
     def __repr__(self):
         return (f"Trade(identifier={self.identifier}, time_period={self.time_period}, strategy={self.strategy}, symbol={self.symbol}, start_date={self.start_date}, "
                 f"end_date={self.end_date}, start_time={self.start_time}, end_time={self.end_time}, "
                 f"enter_price={self.enter_price}, exit_price={self.exit_price}, trade_type={self.trade_type}, "
-                f"leverage={self.leverage}, pnl={self.pnl})")
+                f"leverage={self.leverage}, pnl={self.pnl}, pnl_percent={self.pnl_percent:.2f}%)")
 
     def __post_init__(self):
         if not isinstance(self.identifier, str):

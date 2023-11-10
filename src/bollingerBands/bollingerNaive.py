@@ -1,8 +1,6 @@
-import pandas as pd
-from src.traderBasic import StockAlgorithmDaily
+from src.helperClasses.traderBasic import StockAlgorithmDaily
 from src.config import DATA_DIR
 import os
-from src.helperClasses.getTradeLogPath import get_full_tradelog_path
 
 
 class BollingerNaive(StockAlgorithmDaily):
@@ -110,62 +108,61 @@ class BollingerNaive(StockAlgorithmDaily):
 
 
     # Based on the above state, determine action
-    def get_and_process_action(self, curr_state):
-        # Multiplied from curr_price
+    def get_action(self, curr_state):
         close = curr_state['Close']
-
         upper_band = curr_state['UpperBand']
-        middle_band = curr_state['MiddleBand']
         lower_band = curr_state['LowerBand']
-        sl_upper_band = curr_state['UpperBand3SD']
-        sl_lower_band = curr_state['LowerBand3SD']
         position_type = curr_state['PositionType']
-
         stop_loss_price = curr_state['StopLossPrice']
         target_price = curr_state['TargetPrice']
 
-        action_str = ''
-
-        # If in position (long or short)
         if position_type in ['long', 'short']:
-            # If price has crossed the middle band, exit position
-            if (position_type == 'long' and close >= target_price) or \
-               (position_type == 'short' and close <= target_price):
-                action_str = self.exit_position()  # You'll need to implement this
-            # Elif price is past stop loss
-            elif (position_type == 'long' and close < stop_loss_price) or \
-                    (position_type == 'short' and close > stop_loss_price):
-                action_str = self.exit_position()
-            else:
-                action_str = 'Hold'
-                self.actions.append(0)
-        # If not in a position
+            if position_type == 'long':
+                if close >= target_price:
+                    action_str = 'ExitLong'
+                elif close < stop_loss_price:
+                    action_str = 'ExitLong'
+                else:
+                    action_str = 'Hold'
+            elif position_type == 'short':
+                if close <= target_price:
+                    action_str = 'ExitShort'
+                elif close > stop_loss_price:
+                    action_str = 'ExitShort'
+                else:
+                    action_str = 'Hold'
         elif position_type is None:
-            # If action is triggered by price touching the lower or upper band, start position
             if close <= lower_band:
                 action_str = 'EnterLong'
-                self.start_position('long')  # You'll need to implement this
             elif close >= upper_band:
                 action_str = 'EnterShort'
-                self.start_position('short')  # You'll need to implement this
             else:
                 action_str = 'Wait'
-                self.actions.append(0)
         else:
             raise ValueError(f"Invalid position type {position_type}.")
 
-
         return action_str
-        # If in action (position type != None)
-        #    If price has crosses middle band
-        #       exit (and save to trade log)
-        #    Else
-        #       do nothing
-        # Else
-        #    If action is triggered by price == lower or price == upper
-        #        Start action
-        #    Else
-        #        Do nothing
+
+    def process_action(self, action_str):
+        close = self.df.iloc[self.step]['Close']
+        upper_band = self.df.iloc[self.step][f'Upper_Band_{self.band_data}']
+        lower_band = self.df.iloc[self.step][f'Lower_Band_{self.band_data}']
+        middle_band = self.df.iloc[self.step][f'Middle_Band_{self.band_data}']
+        sl_upper_band = self.df.iloc[self.step][f'Upper_Band_3SD_{self.band_data}']
+        sl_lower_band = self.df.iloc[self.step][f'Lower_Band_3SD_{self.band_data}']
+
+        if action_str == 'EnterLong':
+            self.start_position('long')
+        elif action_str == 'EnterShort':
+            self.start_position('short')
+        elif action_str == 'ExitLong' or action_str == 'ExitShort':
+            self.exit_position()
+        elif action_str == 'Hold':
+            self.actions.append(0)
+        elif action_str == 'Wait':
+            self.actions.append(0)
+        else:
+            raise ValueError(f"Invalid action string {action_str}.")
 
 
 
@@ -275,22 +272,3 @@ class BollingerNaive(StockAlgorithmDaily):
     def update_step(self, new_step):
         # Update the step (time period) for the strategy
         self.step = new_step
-
-    def save_tradelog(self):
-        # Get the trade log DataFrame
-        df = self.trade_log.get_trade_dataframe()
-
-        full_tradelog_path = get_full_tradelog_path()
-
-        # Check if the full trade log CSV already exists
-        if os.path.exists(full_tradelog_path):
-            # If it exists, read it and concatenate with the new log
-            full_tradelog_df = pd.read_csv(full_tradelog_path)
-            updated_tradelog_df = pd.concat([full_tradelog_df, df], ignore_index=True)
-        else:
-            # If it doesn't exist, the new log is the full log
-            print("Making new full trade-log.")
-            updated_tradelog_df = df
-
-        # Save the updated trade log
-        updated_tradelog_df.to_csv(full_tradelog_path, index=False)

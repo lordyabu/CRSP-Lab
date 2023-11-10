@@ -4,9 +4,9 @@ import pandas as pd
 import os
 import json
 import warnings
-from configBT import stock_to_check
+from configBackTest import stock_to_check
 warnings.filterwarnings('ignore')
-from src.bollingerBands.backTesting import BollingerNaiveStrategy
+from src.bollingerBands.bollingerBacktest import BollingerNaiveStrategy
 
 
 
@@ -30,11 +30,11 @@ def get_filtered_data(stock_name):
     filtered_stock_data = stock_data[(stock_data['Date'] >= start_date) & (stock_data['Date'] <= end_date)]
 
     has_nan_in_close = filtered_stock_data['Close'].isna().any()
-    print(has_nan_in_close)
+    # print(has_nan_in_close)
 
     # Check for different types in 'Close' column
     close_types = filtered_stock_data['Close'].apply(type).unique()
-    print(close_types)
+    # print(close_types)
 
     # Assume 'Return' column exists in filtered_stock_data, handle NaNs, and convert to 'Close' price
     filtered_stock_data['Close'] = filtered_stock_data['Close']
@@ -43,7 +43,7 @@ def get_filtered_data(stock_name):
     filtered_stock_data['Low'] = filtered_stock_data['Close']
 
 
-    print(filtered_stock_data['Close'])
+    # print(filtered_stock_data['Close'])
     filtered_stock_data.set_index('Date', inplace=True)
 
     return filtered_stock_data

@@ -1,8 +1,5 @@
 import pandas as pd
-from src.config import DATA_DIR
-import os
-import json
-from src.helperClasses.getTradeLogPath import get_full_tradelog_path
+from src.helperFunctions.getTradeLogPath import get_full_tradelog_path
 
 
 def extract_trades(identifier, sort_by='EndDate', stock_name=None):
@@ -11,8 +8,8 @@ def extract_trades(identifier, sort_by='EndDate', stock_name=None):
     df = pd.read_csv(full_tradelog_path)
 
     # Convert 'StartDate' and 'EndDate' to datetime
-    df['StartDate'] = pd.to_datetime(df['StartDate'].str.replace('Day_', ''), format='%Y%m%d')
-    df['EndDate'] = pd.to_datetime(df['EndDate'].str.replace('Day_', ''), format='%Y%m%d')
+    df['StartDate'] = pd.to_datetime(df['StartDate'], format='%Y%m%d')
+    df['EndDate'] = pd.to_datetime(df['EndDate'], format='%Y%m%d')
 
     # Filter the DataFrame to only include rows where 'Identifier' matches the identifier
     df_filtered = df[df['Identifier'] == identifier]

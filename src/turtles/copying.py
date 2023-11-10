@@ -19,27 +19,28 @@ portfolio_value = 100000  # Starting with $100,000
 
 for index, row in df.iterrows():
 
-    print(row['Close'], row['Rolling_Max_20'])
+    print(row['Close'], row['Rolling_Max_20'], row['High'])
 
     # Entry Signals for System 1 (20-day breakout)
-    if row['Close'] >= row['Rolling_Max_20']:
+    if row['Close'] + .01 >= row['Rolling_Max_20']:
         # Buy signal
         if position <= 0:
             position += 1
             print(f"Buy 1 Unit at day {index + 1} with return {row['Close']}")
             time.sleep(1)
-    elif row['Close'] <= row['Rolling_Min_20']:
+    elif row['Close'] - .01 <= row['Rolling_Min_20']:
         # Sell signal
         if position >= 0:
             position -= 1
             print(f"Sell 1 Unit at day {index + 1} with return {row['Close']}")
+            time.sleep(1)
 
     # Exit Signals for System 1 (10-day breakout)
-    if position >= 0 and row['Close'] <= df['Low'].rolling(window=10).min()[index]:
+    if position >= 0 and row['Close'] - .01 <= df['Low'].rolling(window=10).min()[index]:
         # Exit long position
         position = 0
         print(f"Exit long position at day {index + 1} with return {row['Close']}")
-    elif position <= 0 and row['Close'] >= df['High'].rolling(window=10).max()[index]:
+    elif position <= 0 and row['Close'] + .01 >= df['High'].rolling(window=10).max()[index]:
         # Exit short position
         position = 0
         print(f"Exit short position at day {index + 1} with return {row['Close']}")

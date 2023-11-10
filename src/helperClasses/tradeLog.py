@@ -1,7 +1,4 @@
-from dataclasses import dataclass, field
-import pandas as pd
 from src.helperClasses.trade import Trade
-
 from dataclasses import dataclass, field
 import pandas as pd
 
@@ -17,13 +14,17 @@ class TradeLog:
     def get_total_pnl(self):
         return sum(trade.pnl for trade in self.trades)
 
+
+    def get_total_pnl_percent(self):
+        return sum(trade.pnl_percent for trade in self.trades)
+
     def get_trade_dataframe(self):
         # Can change order if needed
         trades_data = [
-            {'Identifier': trade.identifier, 'TimePeriod': trade.time_period, 'Strategy': trade.strategy, 'Symbol': trade.symbol, 'StartDate': f"{trade.start_date}",
-             'StartTime': f'{trade.start_time}', 'EndDate': f"{trade.end_date}", 'EndTime': f'{trade.end_time}', 'EnterPrice': round(trade.enter_price, 2),
+            {'Identifier': trade.identifier, 'TimePeriod': trade.time_period, 'Strategy': trade.strategy, 'Symbol': trade.symbol, 'StartDate': trade.start_date,
+             'StartTime': trade.start_time, 'EndDate': trade.end_date, 'EndTime': trade.end_time, 'EnterPrice': round(trade.enter_price, 2),
              'ExitPrice': round(trade.exit_price, 2), 'TradeType': trade.trade_type,
-             'Leverage': trade.leverage, 'PnL': round(trade.pnl, 5)}
+             'Leverage': trade.leverage, 'PnL': round(trade.pnl, 2), 'PnL%': round(trade.pnl_percent, 2)}
             for trade in self.trades
         ]
         df = pd.DataFrame(trades_data)

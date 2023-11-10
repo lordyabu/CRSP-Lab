@@ -56,7 +56,6 @@ class BollingerBands:
         # Slice the relevant portion of the DataFrame
         df_sliced = df[start_index:end_index].reset_index(drop=True)
 
-        print(df_sliced.iloc[0]['date'], df_sliced.iloc[-1]['date'])
 
         plt.figure(figsize=(12, 6))
         plt.plot(df_sliced['Close'], color='blue', label='Close')
@@ -73,7 +72,7 @@ class BollingerBands:
         plt.show()
 
 
-    def calculate_individual_bands(self, stock_name):
+    def calculate_individual_bands(self, stock_name, plot_band=False):
         file_path = os.path.join(self.data_directory, f"{stock_name}")
 
         # print(file_path)
@@ -82,7 +81,8 @@ class BollingerBands:
             df = pd.read_csv(file_path)
 
             upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band = self.calculate_bollinger_bands(df)
-            BollingerBands.plot_bollinger_bands(df, upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band)
+            if plot_band:
+                BollingerBands.plot_bollinger_bands(df, upper_band, lower_band, upper_band_3sd, lower_band_3sd, middle_band)
 
             # Add the bands to the DataFrame
             try:
@@ -107,9 +107,6 @@ class BollingerBands:
     def calculate_all_bands(self):
         filenames = [f for f in os.listdir(self.data_directory) if f.endswith('.csv')]
         num_workers = 8
-
-        # print(filenames)
-
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             list(tqdm(executor.map(self.calculate_individual_bands, filenames), total=len(filenames)))
 
@@ -119,5 +116,5 @@ class BollingerBands:
 # Usage:
 directory = os.path.join(DATA_DIR, 'priceDataOHLC')
 bollinger = BollingerBands(data_directory=directory)
-bollinger.calculate_individual_bands('AAPL.csv')
-# bollinger.calculate_all_bands()
+# bollinger.calculate_individual_bands('AAPL.csv', plot_band=True)
+bollinger.calculate_all_bands()

@@ -2,6 +2,7 @@ from src.helperClasses.extractTrades import extract_trades
 from datetime import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
+
 def get_trade_stats(trades):
     # Calculate durations
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']
@@ -19,10 +20,14 @@ def get_trade_stats(trades):
     worst_trade = losing_trades['PnL'].min()
     avg_win = winning_trades['PnL'].mean()
     avg_loss = losing_trades['PnL'].mean()
+    avg_win_percent = winning_trades['PnL%'].mean()  # Average win percentage
+    print(winning_trades['PnL%'][0 : 100])
+    avg_loss_percent = losing_trades['PnL%'].mean()  # Average loss percentage
     avg_trade = trades['PnL'].mean()
     max_trade_duration = trades['TradeDuration'].max()
     avg_trade_duration = trades['TradeDuration'].mean()
     total_return = trades['PnL'].sum()
+    total_return_percent = trades['PnL%'].sum()  # Total return percentage
 
     # Print stats
     print(f"Start: {start_date}")
@@ -31,15 +36,17 @@ def get_trade_stats(trades):
     print(f"# Trades: {total_trades}")
     print(f"# Different Stocks: {unique_stocks}")
     print(f"Win Rate [%]: {win_rate}")
-    print(f"Best Trade [%]: {best_trade}")
-    print(f"Worst Trade [%]: {worst_trade}")
-    print(f"Avg. Win [%]: {avg_win}")
-    print(f"Avg. Loss [%]: {avg_loss}")
-    print(f"Avg. Trade [%]: {avg_trade}")
+    print(f"Best Trade [$]: {best_trade}")
+    print(f"Worst Trade [$]: {worst_trade}")
+    print(f"Avg. Win [$]: {avg_win}")
+    print(f"Avg. Loss [$]: {avg_loss}")
+    print(f"Avg. Win [%]: {avg_win_percent}")
+    print(f"Avg. Loss [%]: {avg_loss_percent}")
+    print(f"Avg. Trade [$]: {avg_trade}")
     print(f"Max. Trade Duration: {max_trade_duration}")
     print(f"Avg. Trade Duration: {avg_trade_duration}")
-    print(f"Total Return [$] (Using each trade = $1): {total_return}")
-
+    print(f"Total Return [$] (Using each trade = 1 share): {total_return}")
+    print(f"Total Return [%] (Where every trade is weighted equally): {total_return_percent}")
 
 def plot_wins_and_losses(trades):
     # Sample 100 random trades if the total number of trades is more than 100
@@ -53,17 +60,19 @@ def plot_wins_and_losses(trades):
     losing_trades = trades_sample[trades_sample['PnL'] < 0]
 
     # Plotting
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(14, 7))
 
-    # Plot winning trades in green
-    plt.scatter(winning_trades['EndDate'], winning_trades['PnL'], color='green', label='Winning Trades')
+    # Plot winning trades in green ($ and %)
+    plt.scatter(winning_trades['EndDate'], winning_trades['PnL'], color='green', label='Winning Trades [$]')
+    plt.scatter(winning_trades['EndDate'], winning_trades['PnL%'], color='lightgreen', label='Winning Trades [%]', alpha=0.5)
 
-    # Plot losing trades in red
-    plt.scatter(losing_trades['EndDate'], losing_trades['PnL'], color='red', label='Losing Trades')
+    # Plot losing trades in red ($ and %)
+    plt.scatter(losing_trades['EndDate'], losing_trades['PnL'], color='red', label='Losing Trades [$]')
+    plt.scatter(losing_trades['EndDate'], losing_trades['PnL%'], color='pink', label='Losing Trades [%]', alpha=0.5)
 
     # Adding labels and title
     plt.xlabel('Time')
-    plt.ylabel('Trade Wins/Losses')
+    plt.ylabel('Trade Wins/Losses ($ and %)')
     plt.title('Sample of 100 Trade Wins and Losses Over Time')
     plt.legend()
 
