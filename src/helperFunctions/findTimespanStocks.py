@@ -1,9 +1,9 @@
 import pandas as pd
 import os
 import json
-from config import DATA_DIR
+from src.config import DATA_DIR
 
-directory = os.path.join(DATA_DIR, 'priceData')
+directory = os.path.join(DATA_DIR, 'priceDataTest')
 save_directory = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
 
 
@@ -23,8 +23,12 @@ def save_stock_filenames_in_timespan_daily(start='20100104', end='20201231', exc
     aapl_data = pd.read_csv(aapl_path)
 
     # Convert dates to string if they are not and remove 'Day_' prefix if present
+    # Ensure the 'date' column is a string and remove any 'Day_' prefix
     aapl_data['date'] = aapl_data['date'].astype(str).str.replace('Day_', '')
+
+    # Filter the DataFrame to include only the rows within the specified date range
     filtered_aapl_data = aapl_data[(aapl_data['date'] >= start) & (aapl_data['date'] <= end)]
+
     num_timesteps = len(filtered_aapl_data)
 
     # Initialize a list to hold the names of the files that fulfill the requirements
@@ -62,4 +66,4 @@ def save_stock_filenames_in_timespan_daily(start='20100104', end='20201231', exc
 
 
 # Usage
-save_stock_filenames_in_timespan_daily(exclude_nan=False)
+save_stock_filenames_in_timespan_daily(exclude_nan=True)

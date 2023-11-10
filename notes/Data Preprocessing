@@ -1,0 +1,14 @@
+1. Some stock values have negative values for some reason in PRC and OPENPRC columns - If you want to convert all to
+positive using abs run the forcePositives function. (Have not fully tested whether these instances are intentional)
+
+2. Most stocks have some NaN values in PRC and OPENPRC columns (including AAPL). A fix using now is to
+    a. fill missing OPENPRC with their previous row's PRC
+    b. fill missing PRC with current rows OPENPRC, if that fails then do previous row's PRC - Executes concurrently with a
+    c. Chop off all beginning rows with NaNs until first row with no NaNs
+
+    d. If there are multiple rows in a row with NaN values, that stock will be excluded if exclude_nan = True
+    in findTimeSpanStocks.py
+
+3. To see what affects are currently applied on your dataset check the majorOpLog in tests.
+This log will be empty upon initialization and will keep track of the major operations done on the dataset.
+Currently, there are 2 major operations SHOWN ABOVE
