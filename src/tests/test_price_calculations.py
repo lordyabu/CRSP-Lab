@@ -2,15 +2,27 @@ import unittest
 import pandas as pd
 import json
 import os
-from src.config import DATA_DIR
+from src.config import DATA_DIR, PRICE_DATA_DIR
 
-directory = os.path.join(DATA_DIR, 'priceDataTest')
+directory = PRICE_DATA_DIR
 valid_directory = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
 
-class MyTestCase(unittest.TestCase):
+class TestMajorOp(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(TestMajorOp, self).__init__(*args, **kwargs)
+        self.test_NaNs = False
+        self.test_positives = False
 
-    def test_all_vals_field(self):
-        errors = []  # List to accumulate assertion errors
+
+    def set_test_flags(self, test_NaNs, test_positives):
+        self.test_NaNs = test_NaNs
+        self.test_positives = test_positives
+
+    def test_NaNs_major_op(self):
+        if not self.test_NaNs:
+            return
+
+        errors = []
 
         with open(valid_directory, 'r') as f:
             valid_stock_data = json.load(f)
@@ -22,16 +34,19 @@ class MyTestCase(unittest.TestCase):
                 stock_directory = os.path.join(directory, stock_filename)
                 stock_df = pd.read_csv(stock_directory)
 
-                # Ensure 'date' column exists for referencing
                 if 'date' not in stock_df.columns:
                     errors.append(f"Error: 'date' column missing in {stock_filename}")
-                    continue  # Skip this file because 'date' column is necessary for further checks
+                    continue
 
                 for field in ['PRC', 'OPENPRC']:
                     if field not in stock_df.columns:
-                        errors.append(f"Error: {field} column missing in {stock_filename}")
+                        first_nan_index = nan_indices[0]
+                        date_at_nan = stock_df.at[first_nan_index, 'date']
+                        errors.append(f"Error: {field} column missing in {stock_filename} at date: {date_at_nan}")
                     elif stock_df[field].dtype != float:
-                        errors.append(f"Error: {field} column in {stock_filename} is not of type float")
+                        first_nan_index = nan_indices[0]
+                        date_at_nan = stock_df.at[first_nan_index, 'date']
+                        errors.append(f"Error: {field} column in {stock_filename} is not of type float at date: {date_at_nan}")
                     else:
                         # Check for NaN values and get the 'date' value at the first index where NaN is found
                         nan_indices = stock_df[stock_df[field].isna()].index
@@ -44,20 +59,20 @@ class MyTestCase(unittest.TestCase):
             except Exception as e:
                 errors.append(f"Exception: Error processing {stock_filename}: {str(e)}")
 
-        # After all files are processed, check if there were any errors collected
         if errors:
             error_message = "\n".join(errors)
             self.fail(f"Test failed with the following errors:\n{error_message}")
 
-    def test_stocks_have_positive_prices(self):
-        # Open the JSON file and load it into a variable
+    def test_positive_major_op(self):
+        if not self.test_positives:
+            return
+
+
         with open(valid_directory, 'r') as f:
             valid_stock_data = json.load(f)
 
-        # Extract valid stock names from the JSON data
         valid_stock_names = valid_stock_data['valid_files']
 
-        # Iterate over the stock names
         for stock_filename in valid_stock_names:
             stock_directory = os.path.join(directory, stock_filename)
             stock_df = pd.read_csv(stock_directory)

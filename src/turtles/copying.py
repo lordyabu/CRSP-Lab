@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import time
 # Load your data
-df = pd.read_csv("C:/Users/theal/Documents/dataEnsembleLegends/priceDataOHLC/AAPL.csv")
+df = pd.read_csv("C:/Users/theal/Documents/CrspData/priceDataOHLC/AAPL.csv")
 
 
 print(df.head())

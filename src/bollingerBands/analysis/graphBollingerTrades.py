@@ -1,18 +1,18 @@
 import matplotlib.pyplot as plt
-from src.helperClasses.extractTrades import extract_trades
+from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import pandas as pd
 import matplotlib.patches as mpatches
 
 def graph_window(start_date, end_date):
     # Load the Bollinger Bands data
-    df_boll = pd.read_csv(r'C:\Users\theal\Documents\dataEnsembleLegends\bollingerDataNew\AAPL.csv')
+    df_boll = pd.read_csv(r'C:\Users\theal\Documents\CrspData\bollingerDataNew\AAPL.csv')
 
     # Convert 'date' to datetime and filter based on the window
     df_boll['date'] = pd.to_datetime(df_boll['date'], format='%Y%m%d')
     df_boll = df_boll[(df_boll['date'] >= start_date) & (df_boll['date'] <= end_date)]
 
     # Extract trades
-    trades = extract_trades('test4', stock_name='AAPL')
+    trades = extract_trades('test1', stock_name='AAPL')
 
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_date) & (trades['EndDate'] <= end_date)]
@@ -63,7 +63,7 @@ def graph_window(start_date, end_date):
 
     plt.ylabel('Return Close')
     plt.xlabel('date')
-    plt.title('AAPL Bollinger Bands and Trades')
+    plt.title('AAPL Bollinger Bands and Trades Dynamic SL')
     plt.tight_layout()
     plt.show()
 

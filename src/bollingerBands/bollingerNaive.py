@@ -5,7 +5,7 @@ import os
 
 class BollingerNaive(StockAlgorithmDaily):
 
-    def __init__(self, stock_name, band_data_name='Default',identifier=-1, time_period='Daily', reset_indexes=False, step=0):
+    def __init__(self, stock_name, band_data_name='Default',identifier=-1, time_period='Daily', reset_indexes=False, step=0, moving_stop_loss=False):
         # Initialize the superclass
         self.trade_log_dir_full = os.path.join(DATA_DIR, 'tradeData')
 
@@ -42,9 +42,11 @@ class BollingerNaive(StockAlgorithmDaily):
         self.time_period = time_period
         self.band_data = band_data_name
 
-        self.strategy = "bollinger_naive"
+        self.strategy = "bollinger_naive_static_sl"
 
         # print(self.df['Close'])
+
+        self.moving_stoploss = moving_stop_loss
 
 
     def __str__(self):
@@ -77,10 +79,19 @@ class BollingerNaive(StockAlgorithmDaily):
 
         # If moving stop loss
         if position_type == 'long':
-            stop_loss_price = lower_band_3sd
+            if not self.moving_stoploss:
+                stop_loss_price = self.stop_loss_price
+            else:
+                self.stop_loss_price = lower_band_3sd
+                stop_loss_price = lower_band_3sd
+
             target_price = middle_band
         elif position_type == 'short':
-            stop_loss_price = upper_band_3sd
+            if not self.moving_stoploss:
+                stop_loss_price = self.stop_loss_price
+            else:
+                self.stop_loss_price = upper_band_3sd
+                stop_loss_price = upper_band_3sd
             target_price = middle_band
         else:
             stop_loss_price = None
@@ -153,8 +164,10 @@ class BollingerNaive(StockAlgorithmDaily):
 
         if action_str == 'EnterLong':
             self.start_position('long')
+            self.stop_loss_price = sl_lower_band
         elif action_str == 'EnterShort':
             self.start_position('short')
+            self.stop_loss_price = sl_upper_band
         elif action_str == 'ExitLong' or action_str == 'ExitShort':
             self.exit_position()
         elif action_str == 'Hold':

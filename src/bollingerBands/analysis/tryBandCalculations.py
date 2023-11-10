@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 start = 4000
 end = 4300
 
-df = pd.read_csv(r'C:\Users\theal\Documents\dataEnsembleLegends\dataDailyTwoCol\AAPL.csv')
+df = pd.read_csv(r'C:\Users\theal\Documents\CrspData\dataDailyTwoCol\AAPL.csv')
 df = df.loc[start:end].reset_index(drop=True)
 
 array_date = np.array(df['Day'])

@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 import os
 import json
-from config import DATA_DIR
+from src.config import DATA_DIR, PRICE_DATA_DIR
 from tqdm import tqdm
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 
-directory = os.path.join(DATA_DIR, 'priceData')
-save_directory = os.path.join(DATA_DIR, 'priceDataOHLC')
+directory = PRICE_DATA_DIR
+save_directory = os.path.join(DATA_DIR, 'priceDataOHLCTest')
 five_min_directory = os.path.join(DATA_DIR, 'dataFiveMin', '.csv')
 
 
@@ -131,6 +131,3 @@ def get_ohlc(individual_stock=None):
 
 
 # get_individual_ohlc('ADBLC')
-
-
-get_ohlc()

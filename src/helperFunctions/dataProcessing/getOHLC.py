@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import os
 import json
-from config import DATA_DIR
+from src.config import DATA_DIR, PRICE_DATA_DIR
 from tqdm import tqdm
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 
-directory = os.path.join(DATA_DIR, 'priceData')
+directory = PRICE_DATA_DIR
 save_directory = os.path.join(DATA_DIR, 'priceDataOHLC')
 five_min_directory = os.path.join(DATA_DIR, 'dataFiveMin', '.csv')
 

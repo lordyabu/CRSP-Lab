@@ -114,7 +114,7 @@ class BollingerBands:
 
 
 # Usage:
-directory = os.path.join(DATA_DIR, 'priceDataOHLC')
-bollinger = BollingerBands(data_directory=directory)
+# directory = os.path.join(DATA_DIR, 'priceDataOHLC')
+# bollinger = BollingerBands(data_directory=directory)
 # bollinger.calculate_individual_bands('AAPL.csv', plot_band=True)
-bollinger.calculate_all_bands()
+# bollinger.calculate_all_bands()

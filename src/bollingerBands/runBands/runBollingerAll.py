@@ -14,7 +14,7 @@ def run_stuffs():
     valid_stocks = [stock.replace('.csv', '') for stock in valid_stocks]
 
     for stock in tqdm(valid_stocks, desc='Processing stocks'):
-        boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier='test1', time_period='Daily',
+        boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier='test2', time_period='Daily',
                               reset_indexes=False, step=0)
 
         while boll.step != len(boll.df.index):
