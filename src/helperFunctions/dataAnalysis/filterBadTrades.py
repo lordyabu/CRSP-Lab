@@ -4,25 +4,9 @@ import pandas as pd
 
 # However, for now we will remove trades that are abs(chg) > 45
 
-from getTradeLogPath import get_full_tradelog_path
 
 
-def remove_naive():
-    # Read the trade log file into a DataFrame
-    trade_log_path = get_full_tradelog_path()
-    df = pd.read_csv(trade_log_path)
-
-    # Calculate absolute percentage change
-    df['abs_chg'] = abs((df['ExitPrice'] - df['EnterPrice']) / df['EnterPrice']) * 100
-
-    # Remove rows where abs(chg) > 45%
-    df = df[df['abs_chg'] <= 45]
-
-    # Remove columns with the name "Unnamed: 0"
-    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-
-    # Save the cleaned DataFrame back to the trade log file
-    df.to_csv(trade_log_path, index=False)
-
-# Call the function to remove rows with abs(chg) > 45% and save the cleaned DataFrame
-remove_naive()
+def remove_naive(trades):
+    # Filter the trades DataFrame to keep rows where the absolute value of 'PnL%' is less than or equal to 0.45
+    filtered_trades = trades[abs(trades['PnL%']) <= 100]
+    return filtered_trades

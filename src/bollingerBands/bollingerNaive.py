@@ -16,7 +16,7 @@ class BollingerNaive(StockAlgorithmDaily):
             pass
 
 
-        super().__init__(stock_name = stock_name, folder_name='bollingerDataNew',reset_indexes = reset_indexes, step = step)
+        super().__init__(stock_name = stock_name, folder_name='bollingerDataNewSplit',reset_indexes = reset_indexes, step = step)
 
         self.in_trade = False
         self.enter_trade_date = None

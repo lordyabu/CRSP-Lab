@@ -40,13 +40,21 @@ class MyTestCase(unittest.TestCase):
                     elif stock_df[field].dtype != float:
                         errors.append(f"Error: {field} column in {stock_filename} is not of type float")
                     else:
-                        # Check for NaN values and get the 'date' value at the first index where NaN is found
+                        # Check for NaN values
                         nan_indices = stock_df[stock_df[field].isna()].index
                         if not nan_indices.empty:
                             first_nan_index = nan_indices[0]
                             date_at_nan = stock_df.at[first_nan_index, 'date']
                             errors.append(
                                 f"Error: {field} column in {stock_filename} contains NaN value at date: {date_at_nan}")
+
+                        # Check for negative values
+                        negative_values = stock_df[stock_df[field] < 0]
+                        if not negative_values.empty:
+                            first_negative_index = negative_values.index[0]
+                            date_at_negative = stock_df.at[first_negative_index, 'date']
+                            errors.append(
+                                f"Error: {field} column in {stock_filename} contains negative value at date: {date_at_negative}, {negative_values}")
 
             except Exception as e:
                 errors.append(f"Exception: Error processing {stock_filename}: {str(e)}")

@@ -2,7 +2,7 @@ from backtesting import Backtest, Strategy
 from src.bollingerBands.bollingerNaive import BollingerNaive
 import warnings
 warnings.filterwarnings('ignore')
-from src.backTesting.configBackTest import stock_to_check
+from src.backTestingOld.configBackTest import stock_to_check
 
 class BollingerNaiveStrategy(Strategy):
     def init(self):

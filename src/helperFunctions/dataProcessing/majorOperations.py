@@ -7,7 +7,7 @@ from src.helperFunctions.dataProcessing.replaceNaNs import fill_nan_according_to
 from src.helperFunctions.dataProcessing.forcePositives import force_positives
 from src.helperFunctions.logInfo import log_to_json
 
-directory = os.path.join(DATA_DIR, 'priceData')
+directory = os.path.join(DATA_DIR, 'priceDataSplit')
 output_directory = Path(PRICE_DATA_DIR)
 output_directory.mkdir(parents=True, exist_ok=True)
 log_file_name = 'majorOpLog.json'

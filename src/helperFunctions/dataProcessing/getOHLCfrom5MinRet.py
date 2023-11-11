@@ -8,7 +8,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 
 directory = PRICE_DATA_DIR
-save_directory = os.path.join(DATA_DIR, 'priceDataOHLCTest')
+save_directory = os.path.join(DATA_DIR, 'priceDataOHLCSplitTest')
 five_min_directory = os.path.join(DATA_DIR, 'dataFiveMin', '.csv')
 
 

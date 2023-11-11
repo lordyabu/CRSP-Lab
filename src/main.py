@@ -4,7 +4,7 @@ from src.config import DATA_DIR
 # 0. Decide what operations to run. If this is fresh run, I suggest having all set to True
 do_major_ops = False
 select_date_range = False
-do_ohlc_calculations = False
+do_ohlc_calculations = True
 do_band_calculation = False
 run_bollinger_trades = False
 # 1. Assuming you have ran the provided MatLab scripts, Have data directory in your Documents Folder Structured like this.
@@ -26,7 +26,7 @@ CrspData
 Note: Replace the descriptions with more specific information about what each directory contains.
 """
 
-# 1. Apply your major operations to the dataset. For more what details on what a major op is go to ./notes/DataPreprocessing.txt
+# 1. Apply your major operations to the dataset. For more what details on what a major op is go to ./notes/DataPreprocessing.txt.txt
 if do_major_ops:
     from src.tests.test_price_calculations import TestMajorOp
     from src.helperFunctions.dataProcessing.majorOperations import major_operations
@@ -76,7 +76,7 @@ if do_ohlc_calculations:
 if do_band_calculation:
     from src.bollingerBands.calculateBands import BollingerBands
 
-    directory = os.path.join(DATA_DIR, 'priceDataOHLC')
+    directory = os.path.join(DATA_DIR, 'priceDataOHLCSplitTest')
     bollinger = BollingerBands(data_directory=directory)
     bollinger.calculate_all_bands()
 

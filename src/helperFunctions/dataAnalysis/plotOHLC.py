@@ -6,7 +6,7 @@ from src.config import DATA_DIR
 import matplotlib.pyplot as plt
 
 
-directory = os.path.join(DATA_DIR, 'priceDataOHLC', 'AAPL.csv')
+directory = os.path.join(DATA_DIR, 'priceDataOHLCTest', 'AAPL.csv')
 
 
 def plot_stuffs():

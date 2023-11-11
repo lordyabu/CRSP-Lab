@@ -14,7 +14,7 @@ class BollingerBands:
 
         self.name = name
 
-        self.save_dir = os.path.join(DATA_DIR, 'bollingerDataNew')
+        self.save_dir = os.path.join(DATA_DIR, 'bollingerDataNewSplit')
 
 
     def __str__(self):

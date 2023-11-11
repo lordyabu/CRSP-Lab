@@ -1,6 +1,6 @@
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import matplotlib.pyplot as plt
-
+from src.helperFunctions.dataAnalysis.filterBadTrades import remove_naive
 def get_trade_stats(trades):
     # Calculate durations
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']
@@ -11,19 +11,15 @@ def get_trade_stats(trades):
     duration = end_date - start_date
     total_trades = len(trades)
     unique_stocks = trades['Symbol'].nunique()
-    winning_trades = trades[trades['PnL'] > 0]
-    losing_trades = trades[trades['PnL'] < 0]
+    winning_trades = trades[trades['PnL%'] > 0]
+    losing_trades = trades[trades['PnL%'] < 0]
     win_rate = (len(winning_trades) / total_trades) * 100
-    best_trade = winning_trades['PnL'].max()
-    worst_trade = losing_trades['PnL'].min()
-    avg_win = winning_trades['PnL'].mean()
-    avg_loss = losing_trades['PnL'].mean()
-    avg_win_percent = winning_trades['PnL%'].mean()  # Average win percentage
-    avg_loss_percent = losing_trades['PnL%'].mean()  # Average loss percentage
-    avg_trade = trades['PnL'].mean()
-    avg_trade_percent = trades['PnL%'].mean()
-    max_trade_duration = trades['TradeDuration'].max()
-    avg_trade_duration = trades['TradeDuration'].mean()
+    avg_win = winning_trades['PnL%'].mean()
+    avg_loss = losing_trades['PnL%'].mean()
+    median_win = winning_trades['PnL%'].median()  # Median win
+    median_loss = losing_trades['PnL%'].median()  # Median loss
+    avg_trade = trades['PnL%'].mean()
+    median_trade = trades['PnL%'].median()  # Median trade
     total_return = trades['PnL'].sum()
     total_return_percent = trades['PnL%'].sum()  # Total return percentage
 
@@ -34,17 +30,12 @@ def get_trade_stats(trades):
     print(f"# Trades: {total_trades}")
     print(f"# Different Stocks: {unique_stocks}")
     print(f"Win Rate [%]: {win_rate}")
-    print(f"Avg. Trade [%]: {avg_trade_percent}")
-    print(f"Avg. Win [%]: {avg_win_percent}")
-    print(f"Avg. Loss [%]: {avg_loss_percent}")
-    # print(f"Best Trade [$]: {best_trade}")
-    # print(f"Worst Trade [$]: {worst_trade}")
-    # print(f"Avg. Trade [$]: {avg_trade}")
-    # print(f"Avg. Win [$]: {avg_win}")
-    # print(f"Avg. Loss [$]: {avg_loss}")
-    print(f"Max. Trade Duration: {max_trade_duration}")
-    print(f"Avg. Trade Duration: {avg_trade_duration}")
-    # print(f"Total Return [$] (Using each trade = 1 share): {total_return}")
+    print(f"Avg. Trade [%]: {avg_trade}")
+    print(f"Median Trade [%]: {median_trade}")
+    print(f"Avg. Win [%]: {avg_win}")
+    print(f"Median Win [%]: {median_win}")
+    print(f"Avg. Loss [%]: {avg_loss}")
+    print(f"Median Loss [%]: {median_loss}")
     print(f"Total Return [%] (Where every trade is weighted equally): {total_return_percent}")
 
 def plot_wins_and_losses(trades):
@@ -77,6 +68,26 @@ def plot_wins_and_losses(trades):
     plt.show()
 
 # Usage
-trades_df = extract_trades('test1', 'EndDate')
+trades_df = extract_trades('test2', 'EndDate')
+
+
+trades_df = remove_naive(trades_df)
+
+
 get_trade_stats(trades_df)
-plot_wins_and_losses(trades_df)
+# plot_wins_and_losses(trades_df)
+
+
+# Find the index of the minimum and maximum values
+min_exit_price_idx = trades_df['ExitPrice'].idxmin()
+min_enter_price_idx = trades_df['EnterPrice'].idxmin()
+min_pnl_percent_idx = trades_df['PnL%'].idxmin()
+max_pnl_percent_idx = trades_df['PnL%'].idxmax()
+
+# Print the minimum values and their corresponding indices
+print(f"Minimum Exit Price: {trades_df['ExitPrice'].min()}, Index: {min_exit_price_idx}")
+print(f"Minimum Enter Price: {trades_df['EnterPrice'].min()}, Index: {min_enter_price_idx}")
+print(f"Minimum PnL%: {trades_df['PnL%'].min()}, Index: {min_pnl_percent_idx}")
+
+# Print the maximum PnL% and its corresponding index
+print(f"Maximum PnL%: {trades_df['PnL%'].max()}, Index: {max_pnl_percent_idx}")
