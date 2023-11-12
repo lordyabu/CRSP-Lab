@@ -33,7 +33,12 @@ class Trade:
     @property
     def pnl_percent(self):
         # PnL as a percentage of the enter price
-        return (self.pnl / self.enter_price) * 100
+        if self.trade_type == 'long':
+            return (self.pnl / self.enter_price) * 100
+        elif self.trade_type == 'short':
+            return (self.pnl / self.exit_price) * 100
+        else:
+            raise ValueError("Trade type must be either 'long' or 'short'")
 
     def __repr__(self):
         return (f"Trade(identifier={self.identifier}, time_period={self.time_period}, strategy={self.strategy}, symbol={self.symbol}, start_date={self.start_date}, "

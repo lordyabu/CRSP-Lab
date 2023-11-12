@@ -20,6 +20,7 @@ def extract_trades(identifier, sort_by='EndDate', stock_name=None):
     # Sort the filtered DataFrame based on the 'sort_by' column
     df_sorted = df_filtered.sort_values(by=sort_by)
 
+
     # Return the sorted DataFrame
     return df_sorted
 

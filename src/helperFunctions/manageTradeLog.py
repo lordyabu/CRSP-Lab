@@ -15,5 +15,5 @@ def remove_trades(identifier):
 
 
 # Usage example
-identifier_to_remove = 'test1'
+identifier_to_remove = 'test5turtle'
 remove_trades(identifier_to_remove)

@@ -4,127 +4,272 @@ import matplotlib.pyplot as plt
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 
 
+# Looks good
 def plot_log_return_histogram(trades):
     trades['LogReturn'] = np.log(trades['PnL%'] / trades['PnL%'].shift(1))
+    trades = trades.replace([np.inf, -np.inf], np.nan).dropna(subset=['LogReturn'])
     trades['LogReturn'].hist(bins=50, alpha=0.6, color='blue')
-    plt.title('Log Return Histogram')
+    plt.title('Log Realized Return Histogram')
     plt.xlabel('Log Return')
     plt.ylabel('Frequency')
     plt.show()
 
-
+# Looks good
 def plot_cumulative_returns(trades):
-    trades['CumulativeReturn'] = (1 + trades['PnL%']).cumprod()
-    trades['CumulativeReturn'].plot(figsize=(14, 7))
-    plt.title('Cumulative Returns Over Time')
+    # Sort the DataFrame by 'EndDate' in ascending order
+    trades = trades.sort_values(by='EndDate')
+
+    # Calculate the cumulative sum of 'PnL%' at each timestamp
+    trades['CumulativeReturn'] = trades['PnL%'].cumsum()
+
+    # Plot the cumulative returns
+    plt.figure(figsize=(14, 7))
+    plt.plot(trades['EndDate'], trades['CumulativeReturn'])
+    plt.title('Cumulative Realized Returns Over Time')
     plt.xlabel('Time')
     plt.ylabel('Cumulative Return')
     plt.show()
 
+# Looks good
+def plot_cumulative_returns_and_trades(trades):
+    # Sort the DataFrame by 'EndDate' in ascending order
+    trades = trades.sort_values(by='EndDate')
 
-def plot_log_cumulative_returns(trades):
-    trades['LogCumulativeReturn'] = np.log(1 + trades['PnL%']).cumsum()
-    trades['LogCumulativeReturn'].plot(figsize=(14, 7))
-    plt.title('Log Cumulative Returns')
-    plt.xlabel('Time')
-    plt.ylabel('Log Cumulative Return')
+    # Calculate the cumulative sum of 'PnL%' at each timestamp
+    trades['CumulativeReturn'] = trades['PnL%'].cumsum()
+
+    # Calculate the cumulative number of trades over time
+    trades['CumulativeNumberOfTrades'] = trades.groupby('EndDate').cumcount()
+
+    for i in trades['CumulativeNumberOfTrades']:
+        print(i)
+
+    # Create a figure with two y-axes
+    fig, ax1 = plt.subplots(figsize=(14, 7))
+
+    # Plot cumulative returns on the first y-axis with lower alpha
+    ax1.plot(trades['EndDate'], trades['CumulativeReturn'], color='b', label='Cumulative Return', alpha=0.5)
+    ax1.set_xlabel('Time')
+    ax1.set_ylabel('Cumulative Realized Return', color='b')
+    ax1.tick_params(axis='y', labelcolor='b')
+
+    # Create a secondary y-axis for the cumulative number of trades
+    ax2 = ax1.twinx()
+    ax2.plot(trades['EndDate'], trades['CumulativeNumberOfTrades'], color='r', label='Cumulative Number of Trades')
+    ax2.set_ylabel('Cumulative Number of Trades Realized', color='r')
+    ax2.tick_params(axis='y', labelcolor='r')
+
+    # Add legends for both plots
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+
+    plt.title('Cumulative Realized Returns and Cumulative Number of Realized Trades Over Time')
     plt.show()
 
 
+# Looks good
 def plot_rolling_volatility(trades):
-    trades['RollingVol'] = trades['PnL%'].rolling(window=126).std() * np.sqrt(126)  # Assuming 21 trading days in a month
-    trades['RollingVol'].plot(figsize=(14, 7))
+    # Assuming 21 trading days in a month, for a 6-month window
+    window_size = 21 * 6
+
+    # Group by 'EndDate' and apply rolling standard deviation
+    trades['RollingVol'] = trades.groupby('EndDate')['PnL%'].transform(
+        lambda x: x.rolling(window=window_size, min_periods=1).std() * np.sqrt(window_size)
+    )
+
+    # Plotting
+    trades.plot(x='EndDate', y='RollingVol', figsize=(14, 7))
     plt.title('6-Month Rolling Volatility')
-    plt.xlabel('Time')
+    plt.xlabel('EndDate')
     plt.ylabel('Volatility')
     plt.show()
 
-
+# Looks good
 def plot_rolling_sharpe_ratio(trades):
-    trades['RollingSharpe'] = trades['PnL%'].rolling(window=126).mean() / trades['PnL%'].rolling(window=126).std()
-    trades['RollingSharpe'].plot(figsize=(14, 7))
+    # Assuming 21 trading days in a month, for a 6-month window
+    window_size = 21 * 6
+
+    # 10yr treasury yield
+    risk_free_rate = 0.4
+
+    # Sort trades by 'EndDate'
+    trades = trades.sort_values(by='EndDate')
+
+    # Calculate rolling mean and standard deviation of 'PnL%'
+    rolling_mean = trades['PnL%'].rolling(window=window_size, min_periods=1).mean()
+    rolling_std = trades['PnL%'].rolling(window=window_size, min_periods=1).std().replace(0, 1e-6)
+
+    # Calculate Sharpe Ratio
+    trades['RollingSharpe'] = (rolling_mean - risk_free_rate) / rolling_std * np.sqrt(252)
+
+    # Plotting
+    trades.plot(x='EndDate', y='RollingSharpe', figsize=(14, 7))
     plt.title('6-Month Rolling Sharpe Ratio')
-    plt.xlabel('Time')
+    plt.xlabel('EndDate')
     plt.ylabel('Sharpe Ratio')
     plt.show()
 
 
-# For this, you need a drawdown calculation function. This is a simplified version.
-def calculate_drawdowns(trades):
+# Looks good
+def plot_drawdowns_over_time(trades):
+    trades = trades.sort_values(by='EndDate')
+    trades['CumulativeReturn'] = trades['PnL%'].cumsum()
     trades['Peak'] = trades['CumulativeReturn'].cummax()
     trades['Drawdown'] = (trades['CumulativeReturn'] - trades['Peak']) / trades['Peak']
-    return trades.sort_values('Drawdown').head(5)
 
-def plot_top_drawdowns(trades):
-    top_drawdowns = calculate_drawdowns(trades)
-    top_drawdowns['Drawdown'].plot(kind='bar')
-    plt.title('Top 5 Drawdown Periods')
-    plt.xlabel('Time')
+    # Plotting the entire Drawdown series
+    trades.plot(x='EndDate', y='Drawdown', kind='line')
+    plt.title('Drawdown Over Time')
+    plt.xlabel('EndDate')
     plt.ylabel('Drawdown')
     plt.show()
 
+# Looks good
+def calculate_drawdowns(trades):
+    trades = trades.sort_values(by='EndDate')
+    trades['CumulativeReturn'] = trades['PnL%'].cumsum()
+    trades['Peak'] = trades['CumulativeReturn'].cummax()
+    trades['Drawdown'] = (trades['CumulativeReturn'] - trades['Peak']) / trades['Peak']
+    return trades
 
+# Looks good
 def plot_underwater_chart(trades):
     drawdowns = calculate_drawdowns(trades)
-    drawdowns['Drawdown'].plot(figsize=(14, 7))
+    drawdowns.plot(x='EndDate', y='Drawdown', figsize=(14, 7))
     plt.title('Underwater Plot')
-    plt.xlabel('Time')
+    plt.xlabel('EndDate')
     plt.ylabel('Drawdown')
-    plt.fill_between(drawdowns.index, drawdowns['Drawdown'], color='blue', alpha=0.3)
+    plt.fill_between(drawdowns['EndDate'], drawdowns['Drawdown'], color='blue', alpha=0.3)
     plt.show()
 
-
+# Looks good
 def plot_monthly_returns(trades):
+    # Ensure 'EndDate' is in datetime format
+    if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
+        trades['EndDate'] = pd.to_datetime(trades['EndDate'])
+
+    # Extract the month from 'EndDate'
     trades['Month'] = trades['EndDate'].dt.to_period('M')
+
+    # Group by month and sum the 'PnL%'
     monthly_returns = trades.groupby('Month')['PnL%'].sum()
+
+    # Plotting
     monthly_returns.plot(kind='bar', figsize=(14, 7))
     plt.title('Monthly Returns')
     plt.xlabel('Month')
     plt.ylabel('Total Return %')
     plt.show()
 
-
+# Looks good
 def plot_annual_returns(trades):
+    # Ensure 'EndDate' is in datetime format
+    if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
+        trades['EndDate'] = pd.to_datetime(trades['EndDate'])
+
+    # Extract the year from 'EndDate'
     trades['Year'] = trades['EndDate'].dt.to_period('Y')
+
+    # Group by year and sum the 'PnL%'
     annual_returns = trades.groupby('Year')['PnL%'].sum()
+
+    # Plotting
     annual_returns.plot(kind='bar', figsize=(14, 7))
     plt.title('Annual Returns')
     plt.xlabel('Year')
-
+    plt.ylabel('Total Return %')
+    plt.show()
 
 
 def plot_distribution_of_monthly_returns(trades):
+    # Ensure 'EndDate' is in datetime format
+    if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
+        trades['EndDate'] = pd.to_datetime(trades['EndDate'])
+
+    # Extract the month from 'EndDate'
     trades['Month'] = trades['EndDate'].dt.to_period('M')
-    monthly_returns = trades.groupby('Month')['PnL%'].sum()
-    monthly_returns.hist(bins=50, alpha=0.6, color='green')
-    plt.title('Distribution of Monthly Returns')
-    plt.xlabel('Monthly Return %')
+
+
+
+    # Group by month and sum the 'PnL%'
+    monthly_total_returns = trades.groupby('Month')['PnL%'].sum()
+
+    # Count the number of trades each month
+    monthly_trade_counts = trades.groupby('Month').size()
+
+    # Calculate average return per trade for each month
+    monthly_avg_returns = monthly_total_returns / monthly_trade_counts
+
+    # Plotting the histogram
+    monthly_avg_returns.hist(bins=50, alpha=0.6, color='green')
+    plt.title('Distribution of Average Monthly Returns per Trade')
+    plt.xlabel('Average Monthly Return(%)')
     plt.ylabel('Frequency')
     plt.show()
 
 
 
+def plot_distribution_of_annual_returns(trades):
+    # Ensure 'EndDate' is in datetime format
+    if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
+        trades['EndDate'] = pd.to_datetime(trades['EndDate'])
+
+    # Extract the year from 'EndDate'
+    trades['Year'] = trades['EndDate'].dt.to_period('Y')
+
+    # Group by year and sum the 'PnL%'
+    annual_total_returns = trades.groupby('Year')['PnL%'].sum()
+
+    # Count the number of trades each year
+    annual_trade_counts = trades.groupby('Year').size()
+
+    # Calculate average return per trade for each year
+    annual_avg_returns = annual_total_returns / annual_trade_counts
+
+    # Plotting the histogram
+    annual_avg_returns.hist(bins=50, alpha=0.6, color='green')
+    plt.title('Distribution of Average Annual Returns per Trade')
+    plt.xlabel('Average Annual Return(%)')
+    plt.ylabel('Frequency')
+    plt.show()
+
+# Looks good
 def plot_return_quantiles(trades):
+    # Calculate the desired quantiles of 'PnL%'
     quantiles = trades['PnL%'].quantile([0.1, 0.25, 0.5, 0.75, 0.9])
+
+    # Plotting the quantiles as a bar chart
     quantiles.plot(kind='bar')
     plt.title('Return Quantiles')
     plt.xlabel('Quantile')
     plt.ylabel('PnL %')
+    plt.xticks(rotation=0)  # This will ensure quantile labels are horizontal for readability
     plt.show()
 
 
-
-def plot_transaction_time_distribution(trades):
-    trades['Time'] = trades['StartDate'].dt.hour + trades['StartDate'].dt.minute / 60
-    trades['Time'].hist(bins=24, alpha=0.6, color='purple')
-    plt.title('Transaction Time Distribution')
-    plt.xlabel('Hour of the Day')
-    plt.ylabel('Frequency')
-    plt.show()
-
+def plot_everything(trades_df):
+    plot_log_return_histogram(trades_df)
+    plot_cumulative_returns_and_trades(trades_df)
+    plot_rolling_volatility(trades_df)
+    plot_rolling_sharpe_ratio(trades_df)
+    plot_drawdowns_over_time(trades_df)
+    plot_underwater_chart(trades_df)
+    plot_monthly_returns(trades_df)
+    plot_annual_returns(trades_df)
+    plot_distribution_of_monthly_returns(trades_df)
+    plot_distribution_of_annual_returns(trades_df)
+    plot_return_quantiles(trades_df)
 
 trades_df = extract_trades('test1', 'EndDate')
 
-print(max(trades_df['PnL%']))
+print(len(trades_df.index))
 
-plot_log_return_histogram(trades_df)
+
+from src.helperFunctions.dataAnalysis.filterBadTrades import remove_naive
+
+trades_df = remove_naive(trades_df)
+
+
+trades_df = trades_df.sort_values(by='EndDate')
+
+plot_everything(trades_df)

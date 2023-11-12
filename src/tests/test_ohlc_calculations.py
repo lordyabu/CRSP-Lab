@@ -4,7 +4,7 @@ import pandas as pd
 import json
 from src.config import DATA_DIR
 
-directory_test = os.path.join(DATA_DIR, 'priceDataOHLC')
+directory_test = os.path.join(DATA_DIR, 'priceDataOHLCSplitTest')
 five_min_directory = os.path.join(DATA_DIR, 'dataFiveMin', '.csv')
 
 valid_directory = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
@@ -87,10 +87,10 @@ class MyTestCase(unittest.TestCase):
                     continue  # Skip to the next date
 
                 # Access the Close, High, Open, and Low values for that date
-                check_open = round(row['Open'].values[0], 1)
-                check_high = round(row['High'].values[0], 1)
-                check_low = round(row['Low'].values[0], 1)
-                check_close = round(row['Close'].values[0], 1)
+                check_open = round(row['Open'].values[0], 2)
+                check_high = round(row['High'].values[0], 2)
+                check_low = round(row['Low'].values[0], 2)
+                check_close = round(row['Close'].values[0], 2)
 
                 if date_val == 20201231:
                     historical_relative = {'Open': round(134.08, 1), 'High': round(134.74, 1), 'Low': round(131.72, 1), 'Close': round(132.69, 1)}
@@ -109,10 +109,10 @@ class MyTestCase(unittest.TestCase):
                         curr_price *= return_val
                         prices.append(curr_price)
 
-                    open_check = round(prices[0], 1)
-                    high_check = round(max(prices), 1)
-                    low_check = round(min(prices), 1)
-                    close_check = round(prices[-1], 1)
+                    open_check = round(prices[0], 2)
+                    high_check = round(max(prices), 2)
+                    low_check = round(min(prices), 2)
+                    close_check = round(prices[-1], 2)
 
                     try:
                         self.assertAlmostEqual(check_open, open_check, places=places_close)

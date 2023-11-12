@@ -10,8 +10,8 @@ valid_directory = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.js
 class TestMajorOp(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestMajorOp, self).__init__(*args, **kwargs)
-        self.test_NaNs = False
-        self.test_positives = False
+        self.test_NaNs = True
+        self.test_positives = True
 
 
     def set_test_flags(self, test_NaNs, test_positives):

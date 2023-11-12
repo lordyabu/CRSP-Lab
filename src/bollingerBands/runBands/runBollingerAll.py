@@ -5,7 +5,7 @@ import json
 from tqdm import tqdm  # Import tqdm
 
 
-def run_stuffs():
+def run_all_bollinger_trades(identifier):
     json_file_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
     with open(json_file_path, 'r') as json_file:
         data = json.load(json_file)
@@ -14,7 +14,7 @@ def run_stuffs():
     valid_stocks = [stock.replace('.csv', '') for stock in valid_stocks]
 
     for stock in tqdm(valid_stocks, desc='Processing stocks'):
-        boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier='test2', time_period='Daily',
+        boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier=f'{identifier}', time_period='Daily',
                               reset_indexes=False, step=0)
 
         while boll.step != len(boll.df.index):
@@ -24,6 +24,3 @@ def run_stuffs():
             boll.update_step(boll.step + 1)
 
         boll.save_tradelog()
-
-
-run_stuffs()

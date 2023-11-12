@@ -68,10 +68,10 @@ def plot_wins_and_losses(trades):
     plt.show()
 
 # Usage
-trades_df = extract_trades('test2', 'EndDate')
+trades_df = extract_trades('test6turtle', 'EndDate')
 
 
-trades_df = remove_naive(trades_df)
+# trades_df = remove_naive(trades_df)
 
 
 get_trade_stats(trades_df)

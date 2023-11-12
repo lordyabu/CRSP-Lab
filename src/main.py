@@ -4,9 +4,11 @@ from src.config import DATA_DIR
 # 0. Decide what operations to run. If this is fresh run, I suggest having all set to True
 do_major_ops = False
 select_date_range = False
-do_ohlc_calculations = True
+do_ohlc_calculations = False
 do_band_calculation = False
-run_bollinger_trades = False
+run_bollinger_trades = True
+do_window_calculation = False
+run_turtle_trades = False
 # 1. Assuming you have ran the provided MatLab scripts, Have data directory in your Documents Folder Structured like this.
 # Only dataDailyTwoCol and dataFiveMin need to have data in currently.
 
@@ -82,6 +84,22 @@ if do_band_calculation:
 
 
 if run_bollinger_trades:
-    pass
+    from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
+
+    run_all_bollinger_trades('test7bollinger')
+
+
+if do_window_calculation:
+    from src.turtles.calculateWindows import TurtleWindows
+
+    directory = os.path.join(DATA_DIR, 'priceDataOHLCSplitTest')
+    turtle_windows = TurtleWindows(data_directory=directory)
+    turtle_windows.calculate_all_windows()
+
+
+if run_turtle_trades:
+    from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
+
+    run_all_turtle_trades('test2turtles')
 
 print("All operations completed.")
