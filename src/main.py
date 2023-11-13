@@ -8,7 +8,7 @@ do_ohlc_calculations = False
 do_band_calculation = False
 run_bollinger_trades = True
 do_window_calculation = False
-run_turtle_trades = False
+run_turtle_trades = True
 # 1. Assuming you have ran the provided MatLab scripts, Have data directory in your Documents Folder Structured like this.
 # Only dataDailyTwoCol and dataFiveMin need to have data in currently.
 
@@ -84,6 +84,7 @@ if do_band_calculation:
 
 
 if run_bollinger_trades:
+    print("running bollinger")
     from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
 
     run_all_bollinger_trades('test7bollinger')
@@ -98,6 +99,7 @@ if do_window_calculation:
 
 
 if run_turtle_trades:
+    print("runningturtles")
     from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
 
     run_all_turtle_trades('test2turtles')

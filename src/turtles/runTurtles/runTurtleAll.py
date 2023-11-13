@@ -25,4 +25,4 @@ def run_all_turtle_trades(identifier):
         turt.save_tradelog()
 
 
-run_all_turtle_trades('test6turtle')
+# run_all_turtle_trades('test6turtle')

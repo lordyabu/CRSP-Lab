@@ -12,7 +12,7 @@ def get_full_tradelog_path():
     end_date = data.get('end_date').replace('Day_', '')
 
     # Construct the filename with the start and end dates
-    filename = f"allTrades_{start_date}_to_{end_date}.csv"
+    filename = f"allTrades_{start_date}_to_{end_date}_example.csv"
     full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', filename)
 
     return full_tradelog_path

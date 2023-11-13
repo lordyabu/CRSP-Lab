@@ -73,6 +73,6 @@ def graph_window(start_date, end_date, stock_name, identifier):
 
 
 # Usage example
-start_date = pd.to_datetime('2018-01-04')
-end_date = pd.to_datetime('2020-12-31')
-graph_window(start_date, end_date, 'GOOG', 'test6turtle')
+start_date = pd.to_datetime('2011-06-06')
+end_date = pd.to_datetime('2012-04-23')
+graph_window(start_date, end_date, 'YRCW', 'test6turtle')

@@ -41,8 +41,8 @@ def plot_cumulative_returns_and_trades(trades):
     # Calculate the cumulative number of trades over time
     trades['CumulativeNumberOfTrades'] = trades.groupby('EndDate').cumcount()
 
-    for i in trades['CumulativeNumberOfTrades']:
-        print(i)
+    # for i in trades['CumulativeNumberOfTrades']:
+    #     print(i)
 
     # Create a figure with two y-axes
     fig, ax1 = plt.subplots(figsize=(14, 7))
@@ -103,7 +103,7 @@ def plot_rolling_sharpe_ratio(trades):
     trades['RollingSharpe'] = (rolling_mean - risk_free_rate) / rolling_std * np.sqrt(252)
 
     # Plotting
-    trades.plot(x='EndDate', y='RollingSharpe', figsize=(14, 7))
+    trades.iloc[250:].plot(x='EndDate', y='RollingSharpe', figsize=(14, 7))
     plt.title('6-Month Rolling Sharpe Ratio')
     plt.xlabel('EndDate')
     plt.ylabel('Sharpe Ratio')
@@ -118,7 +118,7 @@ def plot_drawdowns_over_time(trades):
     trades['Drawdown'] = (trades['CumulativeReturn'] - trades['Peak']) / trades['Peak']
 
     # Plotting the entire Drawdown series
-    trades.plot(x='EndDate', y='Drawdown', kind='line')
+    trades.iloc[250:].plot(x='EndDate', y='Drawdown', kind='line')
     plt.title('Drawdown Over Time')
     plt.xlabel('EndDate')
     plt.ylabel('Drawdown')
@@ -135,11 +135,12 @@ def calculate_drawdowns(trades):
 # Looks good
 def plot_underwater_chart(trades):
     drawdowns = calculate_drawdowns(trades)
-    drawdowns.plot(x='EndDate', y='Drawdown', figsize=(14, 7))
+    drawdowns_filtered = drawdowns.iloc[250:]
+    drawdowns_filtered.plot(x='EndDate', y='Drawdown', figsize=(14, 7))
     plt.title('Underwater Plot')
     plt.xlabel('EndDate')
     plt.ylabel('Drawdown')
-    plt.fill_between(drawdowns['EndDate'], drawdowns['Drawdown'], color='blue', alpha=0.3)
+    plt.fill_between(drawdowns_filtered['EndDate'], drawdowns_filtered['Drawdown'], color='blue', alpha=0.3)
     plt.show()
 
 # Looks good
@@ -249,25 +250,23 @@ def plot_return_quantiles(trades):
 
 def plot_everything(trades_df):
     plot_log_return_histogram(trades_df)
+    plot_cumulative_returns(trades_df)
     plot_cumulative_returns_and_trades(trades_df)
     plot_rolling_volatility(trades_df)
     plot_rolling_sharpe_ratio(trades_df)
-    plot_drawdowns_over_time(trades_df)
-    plot_underwater_chart(trades_df)
+    # plot_drawdowns_over_time(trades_df)
+    # plot_underwater_chart(trades_df)
     plot_monthly_returns(trades_df)
     plot_annual_returns(trades_df)
     plot_distribution_of_monthly_returns(trades_df)
     plot_distribution_of_annual_returns(trades_df)
     plot_return_quantiles(trades_df)
 
-trades_df = extract_trades('test1', 'EndDate')
+trades_df = extract_trades('test6turtle', 'EndDate', stock_name='YRCW')
 
 print(len(trades_df.index))
 
 
-from src.helperFunctions.dataAnalysis.filterBadTrades import remove_naive
-
-trades_df = remove_naive(trades_df)
 
 
 trades_df = trades_df.sort_values(by='EndDate')

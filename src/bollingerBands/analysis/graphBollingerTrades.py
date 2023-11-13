@@ -3,16 +3,16 @@ from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import pandas as pd
 import matplotlib.patches as mpatches
 
-def graph_window(start_date, end_date):
+def graph_window(start_date, end_date, stock, identifier):
     # Load the Bollinger Bands data
-    df_boll = pd.read_csv(r'C:\Users\theal\Documents\CrspData\bollingerDataNew\AAPL.csv')
+    df_boll = pd.read_csv(r'C:\Users\theal\Documents\CrspData\bollingerDataNewSplit\{}.csv'.format(stock))
 
     # Convert 'date' to datetime and filter based on the window
     df_boll['date'] = pd.to_datetime(df_boll['date'], format='%Y%m%d')
     df_boll = df_boll[(df_boll['date'] >= start_date) & (df_boll['date'] <= end_date)]
 
     # Extract trades
-    trades = extract_trades('test1', stock_name='AAPL')
+    trades = extract_trades(f'{identifier}', stock_name=f'{stock}')
 
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_date) & (trades['EndDate'] <= end_date)]
@@ -61,9 +61,9 @@ def graph_window(start_date, end_date):
     # Create combined legend
     plt.legend(handles=handles, loc='upper left')
 
-    plt.ylabel('Return Close')
+    plt.ylabel('Close')
     plt.xlabel('date')
-    plt.title('AAPL Bollinger Bands and Trades Dynamic SL')
+    plt.title(f'{stock} Bollinger Bands and Trades Dynamic SL')
     plt.tight_layout()
     plt.show()
 
@@ -71,4 +71,4 @@ def graph_window(start_date, end_date):
 # Usage example
 start_date = pd.to_datetime('2011-05-11')
 end_date = pd.to_datetime('2011-10-02')
-graph_window(start_date, end_date)
+graph_window(start_date, end_date, 'GOOG', 'test7bollinger')

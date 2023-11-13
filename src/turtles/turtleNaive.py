@@ -133,13 +133,17 @@ class TurtleNaive(StockAlgorithmDaily):
 
         self.actions.append(actions)
 
+        previous_prices_index = max(0, self.step - 50)
+        previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
+
         for action in actions:
+
             if action == 'EnterLong':
-                buy_unit = Unit('long', curr_price, curr_date, 0)
+                buy_unit = Unit('long', curr_price, curr_date, curr_time, previous_prices)
                 self.long_units.append(buy_unit)
                 self.num_long_units_bought += 1
             elif action == 'EnterShort':
-                short_unit = Unit('short', curr_price, curr_date, 0)
+                short_unit = Unit('short', curr_price, curr_date, curr_time, previous_prices)
                 self.short_units.append(short_unit)
                 self.num_short_units_bought += 1
             elif action == 'ExitLong':
@@ -157,12 +161,13 @@ class TurtleNaive(StockAlgorithmDaily):
                     exit_price = curr_price
                     trade_type = unit.pos_type
                     leverage = self.leverage
+                    previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
                                              end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage)
+                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage ,previous_prices=previous_prices)
 
                 self.clear_long_positions()
             elif action == 'ExitShort':
@@ -180,12 +185,13 @@ class TurtleNaive(StockAlgorithmDaily):
                     exit_price = curr_price
                     trade_type = unit.pos_type
                     leverage = self.leverage
+                    previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
                                              end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage)
+                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage, previous_prices=previous_prices)
 
                 self.clear_short_positions()
             elif action == 'Wait':

@@ -3,7 +3,7 @@ from src.bollingerBands.bollingerNaive import BollingerNaive
 
 
 def run_stuffs():
-    boll = BollingerNaive(stock_name='AAPL', band_data_name='Default',identifier='test4', time_period='Daily', reset_indexes=False, step=0)
+    boll = BollingerNaive(stock_name='GOOG', band_data_name='Default',identifier='test4past50', time_period='Daily', reset_indexes=False, step=0)
 
     while boll.step != len(boll.df.index):
         state = boll.get_state()

@@ -15,7 +15,7 @@ def run_all_bollinger_trades(identifier):
 
     for stock in tqdm(valid_stocks, desc='Processing stocks'):
         boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier=f'{identifier}', time_period='Daily',
-                              reset_indexes=False, step=0)
+                              reset_indexes=False, step=0, moving_stop_loss=True)
 
         while boll.step != len(boll.df.index):
             state = boll.get_state()

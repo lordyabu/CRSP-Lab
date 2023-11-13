@@ -5,7 +5,7 @@ import os
 
 class BollingerNaive(StockAlgorithmDaily):
 
-    def __init__(self, stock_name, band_data_name='Default',identifier=-1, time_period='Daily', reset_indexes=False, step=0, moving_stop_loss=False):
+    def __init__(self, stock_name, band_data_name='Default',identifier=-1, time_period='Daily', reset_indexes=False, step=0, moving_stop_loss=True):
         # Initialize the superclass
         self.trade_log_dir_full = os.path.join(DATA_DIR, 'tradeData')
 
@@ -31,6 +31,7 @@ class BollingerNaive(StockAlgorithmDaily):
 
 
         self.curr_price = None
+        self.previous_prices = None
 
         self.leverage = 1
 
@@ -42,7 +43,7 @@ class BollingerNaive(StockAlgorithmDaily):
         self.time_period = time_period
         self.band_data = band_data_name
 
-        self.strategy = "bollinger_naive_static_sl"
+        self.strategy = "bollinger_naive_dynamic_sl"
 
         # print(self.df['Close'])
 
@@ -51,7 +52,7 @@ class BollingerNaive(StockAlgorithmDaily):
 
     def __str__(self):
         # Provide a meaningful string representation of this class
-        return f"BollingerNaive"
+        return f"BollingerNaiveDynamicSL"
 
     def __repr__(self):
         # Provide a string that could be used to recreate this object
@@ -180,6 +181,10 @@ class BollingerNaive(StockAlgorithmDaily):
 
 
     def start_position(self, action):
+
+        previous_prices_index = max(0, self.step - 50)
+        self.previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
+
         if action == 'long':
             self.in_trade = True
             self.enter_trade_date = str(self.df.iloc[self.step]["date"])
@@ -250,8 +255,10 @@ class BollingerNaive(StockAlgorithmDaily):
         leverage = self.leverage
 
         self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
-        start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time, enter_price=enter_price,
-        exit_price=exit_price, trade_type=trade_type, leverage=leverage)
+                                 start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time,
+                                 enter_price=enter_price, exit_price=exit_price, trade_type=trade_type,
+                                 leverage=leverage,
+                                 previous_prices=self.previous_prices)
 
         if trade_type == 'long':
             self.actions.append(2)
@@ -276,7 +283,7 @@ class BollingerNaive(StockAlgorithmDaily):
 
 
         self.curr_price = None
-
+        self.previous_prices = None
         self.leverage = 1
 
         return return_str

@@ -14,6 +14,7 @@ class Trade:
     exit_price: float
     trade_type: str  # 'long' or 'short'
     leverage: float = 1
+    previous_prices: list = None  # New attribute to hold the previous 50 prices
 
     @property
     def datetime(self):
@@ -74,3 +75,7 @@ class Trade:
 
         if self.trade_type not in ['long', 'short']:
             raise ValueError("Trade type must be either 'long' or 'short'")
+
+        if self.previous_prices is not None:
+            if not isinstance(self.previous_prices, list):
+                raise TypeError("previous_prices must be a list")
