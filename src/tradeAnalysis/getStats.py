@@ -46,6 +46,19 @@ def get_trade_stats(trades, start_date, end_date):
     print(f"Median Loss [%]: {median_loss}")
     print(f"Total Return [%] (Where every trade is weighted equally): {total_return_percent}")
 
+    min_exit_price_idx = trades['ExitPrice'].idxmin()
+    min_enter_price_idx = trades['EnterPrice'].idxmin()
+    min_pnl_percent_idx = trades['PnL%'].idxmin()
+    max_pnl_percent_idx = trades['PnL%'].idxmax()
+
+    # Print the minimum values and their corresponding indices
+    print(f"Minimum Exit Price: {trades['ExitPrice'].min()}, Index: {min_exit_price_idx}")
+    print(f"Minimum Enter Price: {trades['EnterPrice'].min()}, Index: {min_enter_price_idx}")
+    print(f"Minimum PnL%: {trades['PnL%'].min()}, Index: {min_pnl_percent_idx}")
+
+    # Print the maximum PnL% and its corresponding index
+    print(f"Maximum PnL%: {trades['PnL%'].max()}, Index: {max_pnl_percent_idx}")
+
     return {
         "Start": start_date,
         "End": end_date,
@@ -62,7 +75,9 @@ def get_trade_stats(trades, start_date, end_date):
         "Total Return [%]": total_return_percent
     }
 
-def plot_wins_and_losses(trades):
+def plot_wins_and_losses(trades, start_date, end_date):
+    trades = trades[(trades['EndDate'] >= start_date) & (trades['EndDate'] <= end_date)]
+
     # Sample 100 random trades if the total number of trades is more than 100
     if len(trades) > 100:
         trades_sample = trades.sample(n=100)
@@ -119,30 +134,30 @@ def rank_stocks_by_pnl(identifier, start_date, end_date):
 
 
 # Usage
-trades_df = extract_trades('test6turtle', 'EndDate', stock_name='LNC')
+# trades_df = extract_trades('test2turtles', 'EndDate', trade_type='long')
+#
+#
+#
+# # Define your start and end dates
+# start_date = '2010-01-04'
+# end_date = '2020-12-31'
+# # Call the function with the date range
+# a = get_trade_stats(trades_df, start_date, end_date)
+#
+# min_exit_price_idx = trades_df['ExitPrice'].idxmin()
+# min_enter_price_idx = trades_df['EnterPrice'].idxmin()
+# min_pnl_percent_idx = trades_df['PnL%'].idxmin()
+# max_pnl_percent_idx = trades_df['PnL%'].idxmax()
+#
+# # Print the minimum values and their corresponding indices
+# print(f"Minimum Exit Price: {trades_df['ExitPrice'].min()}, Index: {min_exit_price_idx}")
+# print(f"Minimum Enter Price: {trades_df['EnterPrice'].min()}, Index: {min_enter_price_idx}")
+# print(f"Minimum PnL%: {trades_df['PnL%'].min()}, Index: {min_pnl_percent_idx}")
+#
+# # Print the maximum PnL% and its corresponding index
+# print(f"Maximum PnL%: {trades_df['PnL%'].max()}, Index: {max_pnl_percent_idx}")
 
 
+# df = rank_stocks_by_pnl('test7bollinger', start_date, end_date)
 
-# Define your start and end dates
-start_date = '2010-01-04'
-end_date = '2020-12-31'
-# Call the function with the date range
-a = get_trade_stats(trades_df, start_date, end_date)
-
-min_exit_price_idx = trades_df['ExitPrice'].idxmin()
-min_enter_price_idx = trades_df['EnterPrice'].idxmin()
-min_pnl_percent_idx = trades_df['PnL%'].idxmin()
-max_pnl_percent_idx = trades_df['PnL%'].idxmax()
-
-# Print the minimum values and their corresponding indices
-print(f"Minimum Exit Price: {trades_df['ExitPrice'].min()}, Index: {min_exit_price_idx}")
-print(f"Minimum Enter Price: {trades_df['EnterPrice'].min()}, Index: {min_enter_price_idx}")
-print(f"Minimum PnL%: {trades_df['PnL%'].min()}, Index: {min_pnl_percent_idx}")
-
-# Print the maximum PnL% and its corresponding index
-print(f"Maximum PnL%: {trades_df['PnL%'].max()}, Index: {max_pnl_percent_idx}")
-
-
-df = rank_stocks_by_pnl('test6turtle', start_date, end_date)
-
-df.to_csv('turtle_rankings.csv')
+# df.to_csv('bollinger_rankings.csv')

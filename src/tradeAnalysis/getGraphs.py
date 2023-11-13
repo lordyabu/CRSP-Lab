@@ -32,34 +32,40 @@ def plot_cumulative_returns(trades):
 
 # Looks good
 def plot_cumulative_returns_and_trades(trades):
-    # Sort the DataFrame by 'EndDate' in ascending order
     trades = trades.sort_values(by='EndDate')
 
-    # Calculate the cumulative sum of 'PnL%' at each timestamp
+    # Calculate the cumulative sum of 'PnL%'
     trades['CumulativeReturn'] = trades['PnL%'].cumsum()
 
+    # Create a new DataFrame with a continuous date range
+    date_range = pd.date_range(start=trades['EndDate'].min(), end=trades['EndDate'].max())
+    date_df = pd.DataFrame(date_range, columns=['EndDate'])
+
+    # Merge with the original data
+    merged_df = pd.merge(date_df, trades, on='EndDate', how='left')
+
+    # Forward fill the 'CumulativeReturn' to account for dates with no trades
+    merged_df['CumulativeReturn'] = merged_df['CumulativeReturn'].ffill()
+
     # Calculate the cumulative number of trades over time
-    trades['CumulativeNumberOfTrades'] = trades.groupby('EndDate').cumcount()
+    merged_df['TradeCount'] = merged_df['PnL%'].notnull().cumsum()
 
-    # for i in trades['CumulativeNumberOfTrades']:
-    #     print(i)
-
-    # Create a figure with two y-axes
+    # Plotting
     fig, ax1 = plt.subplots(figsize=(14, 7))
 
-    # Plot cumulative returns on the first y-axis with lower alpha
-    ax1.plot(trades['EndDate'], trades['CumulativeReturn'], color='b', label='Cumulative Return', alpha=0.5)
+    # Plot cumulative returns
+    ax1.plot(merged_df['EndDate'], merged_df['CumulativeReturn'], color='b', label='Cumulative Return', alpha=0.5)
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Cumulative Realized Return', color='b')
     ax1.tick_params(axis='y', labelcolor='b')
 
-    # Create a secondary y-axis for the cumulative number of trades
+    # Secondary y-axis for the cumulative number of trades
     ax2 = ax1.twinx()
-    ax2.plot(trades['EndDate'], trades['CumulativeNumberOfTrades'], color='r', label='Cumulative Number of Trades')
+    ax2.plot(merged_df['EndDate'], merged_df['TradeCount'], color='r', label='Cumulative Number of Trades')
     ax2.set_ylabel('Cumulative Number of Trades Realized', color='r')
     ax2.tick_params(axis='y', labelcolor='r')
 
-    # Add legends for both plots
+    # Add legends
     ax1.legend(loc='upper left')
     ax2.legend(loc='upper right')
 
@@ -248,7 +254,14 @@ def plot_return_quantiles(trades):
     plt.show()
 
 
-def plot_everything(trades_df):
+def plot_everything(trades_df, start_date, end_date):
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+
+    # Filter the DataFrame for trades within the specified date range
+    trades_df = trades_df[(trades_df['EndDate'] >= start_date) & (trades_df['EndDate'] <= end_date)]
+
+
     plot_log_return_histogram(trades_df)
     plot_cumulative_returns(trades_df)
     plot_cumulative_returns_and_trades(trades_df)
@@ -262,13 +275,13 @@ def plot_everything(trades_df):
     plot_distribution_of_annual_returns(trades_df)
     plot_return_quantiles(trades_df)
 
-trades_df = extract_trades('test6turtle', 'EndDate', stock_name='YRCW')
-
-print(len(trades_df.index))
-
-
-
-
-trades_df = trades_df.sort_values(by='EndDate')
-
-plot_everything(trades_df)
+# trades_df = extract_trades('test2turtles', 'EndDate', trade_type='long')
+#
+# print(len(trades_df.index))
+#
+#
+#
+#
+# trades_df = trades_df.sort_values(by='EndDate')
+#
+# plot_everything(trades_df)

@@ -3,7 +3,7 @@ from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import pandas as pd
 import matplotlib.patches as mpatches
 
-def graph_window(start_date, end_date, stock, identifier):
+def graph_window_bollinger(start_date, end_date, stock, strategy):
     # Load the Bollinger Bands data
     df_boll = pd.read_csv(r'C:\Users\theal\Documents\CrspData\bollingerDataNewSplit\{}.csv'.format(stock))
 
@@ -12,7 +12,7 @@ def graph_window(start_date, end_date, stock, identifier):
     df_boll = df_boll[(df_boll['date'] >= start_date) & (df_boll['date'] <= end_date)]
 
     # Extract trades
-    trades = extract_trades(f'{identifier}', stock_name=f'{stock}')
+    trades = extract_trades(strategy=f'{strategy}', stock_name=f'{stock}')
 
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_date) & (trades['EndDate'] <= end_date)]
@@ -69,6 +69,6 @@ def graph_window(start_date, end_date, stock, identifier):
 
 
 # Usage example
-start_date = pd.to_datetime('2011-05-11')
-end_date = pd.to_datetime('2011-10-02')
-graph_window(start_date, end_date, 'GOOG', 'test7bollinger')
+# start_date = pd.to_datetime('2011-05-11')
+# end_date = pd.to_datetime('2011-10-02')
+# graph_window_bollinger(start_date, end_date, 'GOOG', 'bollinger_naive_dynamic_sl')

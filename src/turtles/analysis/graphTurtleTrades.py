@@ -3,7 +3,9 @@ from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import pandas as pd
 import matplotlib.patches as mpatches
 
-def graph_window(start_date, end_date, stock_name, identifier):
+def graph_window_turtle(start_date, end_date, stock_name, strategy):
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
     # Load the Bollinger Bands data
     df_turt = pd.read_csv(r'C:\Users\theal\Documents\CrspData\turtleData\{}.csv'.format(stock_name))
 
@@ -12,7 +14,7 @@ def graph_window(start_date, end_date, stock_name, identifier):
     df_turt = df_turt[(df_turt['date'] >= start_date) & (df_turt['date'] <= end_date)]
 
     # Extract trades
-    trades = extract_trades(f'{identifier}', stock_name=f'{stock_name}')
+    trades = extract_trades(strategy=f'{strategy}', stock_name=f'{stock_name}')
 
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_date) & (trades['EndDate'] <= end_date)]
@@ -72,7 +74,3 @@ def graph_window(start_date, end_date, stock_name, identifier):
     plt.show()
 
 
-# Usage example
-start_date = pd.to_datetime('2011-06-06')
-end_date = pd.to_datetime('2012-04-23')
-graph_window(start_date, end_date, 'YRCW', 'test6turtle')
