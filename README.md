@@ -9,12 +9,12 @@ Check /notes for high level documentation notes
   - [getindividualstocks.m](/src/matlabExtraction/getindivudalstocks.m) - Converts Rosettaupdated to individual csvs
   - [majorOperations.py](/src/helperFunctions/dataPreprocessing/majorOperations.py) - Applies major operations to dataset
 
+- OHLC Calculations
+  - [getOHLCfrom5minRet.py](/src/helperFunctions/dataPreprocessing/getOHLCfrom5MinRet.py) - Calculates OHLC from 5min return data
+
 
 - Timespan
   - [findTimespanStocks.py](/src/helperFunctions/dataPreprocessing/findTimespanStocks.py) - Gets valid stocks for specified timespan
-
-- OHLC Calculations
-  - [getOHLCfrom5minRet.py](/src/helperFunctions/dataPreprocessing/getOHLCfrom5MinRet.py) - Calculates OHLC from 5min return data
 
 
 - Bollinger Bands Analysis
