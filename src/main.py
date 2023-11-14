@@ -112,7 +112,7 @@ if run_bollinger_trades:
 
 if do_window_calculation:
     from src.turtles.calculateWindows import TurtleWindows
-
+    print("Running Turtle calculations...")
     directory = OHLC_DATA_DIR
     turtle_windows = TurtleWindows(data_directory=directory)
     turtle_windows.calculate_all_windows()
@@ -122,7 +122,7 @@ if do_window_calculation:
 # ======================
 
 if run_turtle_trades:
-    print("runningturtles")
+    print("Running Turtles trades...")
     from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
 
     run_all_turtle_trades('testALEXturtles')
