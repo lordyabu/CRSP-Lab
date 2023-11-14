@@ -11,8 +11,8 @@ PRICE_DATA_DIR = os.path.join(DATA_DIR, 'priceDataMO') # Price data post Major O
 OHLC_DATA_DIR =  os.path.join(DATA_DIR, 'priceDataOHLC') # Price data post OHLC calculations
 FIVE_MIN_DIR = os.path.join(DATA_DIR, 'dataFiveMin', '.csv') # 5 min return data
 
-BOLLINGER_DATA_NAME = 'bollingerData'
+BOLLINGER_DATA_NAME = 'bollingerDataTst'
 BOLLINGER_DATA_DIR = os.path.join(DATA_DIR, BOLLINGER_DATA_NAME)
 
-TURTLE_DATA_NAME = 'turtleData'
+TURTLE_DATA_NAME = 'turtleDataTst'
 TURTLE_DATA_DIR = os.path.join(DATA_DIR, TURTLE_DATA_NAME)

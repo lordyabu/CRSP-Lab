@@ -14,10 +14,10 @@ warnings.filterwarnings('ignore')
 do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
-do_band_calculation = False
-run_bollinger_trades = False
-do_window_calculation = False
-run_turtle_trades = False
+do_band_calculation = True
+run_bollinger_trades = True
+do_window_calculation = True
+run_turtle_trades = True
 
 # ======================================================
 # Directory Structure (Ensure this matches your setup) - (If you want to change names go to config.py(don't change helperData or tradeData))
@@ -104,7 +104,7 @@ if run_bollinger_trades:
     print("Running Bollinger Band trades...")
     from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
 
-    run_all_bollinger_trades('test1bollinger')
+    run_all_bollinger_trades('testALEXbollinger')
 
 # ============================
 # Turtle Strategy Calculations
@@ -125,6 +125,6 @@ if run_turtle_trades:
     print("runningturtles")
     from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
 
-    run_all_turtle_trades('test3turtles')
+    run_all_turtle_trades('testALEXturtles')
 
 print("All operations completed.")

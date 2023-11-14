@@ -202,20 +202,17 @@ class BollingerNaive(StockAlgorithmDaily):
         Args:
             action (str): The action to start the position ('long' or 'short').
         """
+        self.in_trade = True
         self.curr_price = self.df.iloc[self.step]['Close']
         previous_prices_index = max(0, self.step - 50)
         self.previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
-        self.in_trade = True
         self.enter_trade_date = str(self.df.iloc[self.step]["date"])
-        self.exit_trade_date = None
 
         if self.time_period != 'Daily':
             self.enter_trade_time = '160000'
         else:
             self.enter_trade_time = self.step
-        self.exit_trade_time = None
         self.enter_trade_price = self.curr_price
-        self.exit_trade_price = None
 
         if action == 'long':
             self.trade_direction = 'long'
