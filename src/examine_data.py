@@ -22,11 +22,11 @@ end_date = '2020-12-31'
 
 # Plot various graphs for the trading strategy
 # Uncomment the line below to execute
-plot_everything(trades_df, start_date, end_date)
+#plot_everything(trades_df, start_date, end_date)
 
 # Get and print trade statistics
 # Uncomment the line below to execute
-# get_trade_stats(trades_df, start_date, end_date)
+get_trade_stats(trades_df, start_date, end_date)
 
 # Plot wins and losses
 # Uncomment the line below to execute

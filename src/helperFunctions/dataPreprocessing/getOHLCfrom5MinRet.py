@@ -8,12 +8,14 @@ import pandas as pd
 import os
 from src.config import PRICE_DATA_DIR, OHLC_DATA_DIR, FIVE_MIN_DIR
 from tqdm import tqdm
+import json
 from concurrent.futures import ThreadPoolExecutor
 
 directory = PRICE_DATA_DIR
 save_directory = OHLC_DATA_DIR
 five_min_directory = FIVE_MIN_DIR
 
+bad_stocks = []
 
 def calculate_ohlc(date, stock_name=None, actual_price=None, actual_end_price=None):
     """
@@ -38,6 +40,8 @@ def calculate_ohlc(date, stock_name=None, actual_price=None, actual_end_price=No
 
         if not actual_price:
             curr_price = 1
+            if stock_name not in bad_stocks:
+                bad_stocks.append(stock_name)
         else:
             curr_price = round(actual_price, 2)
 
@@ -138,6 +142,10 @@ def get_all_ohlc(directory):
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         # Use tqdm for progress bar, starting from the file where "ACLA" is found
         list(tqdm(executor.map(process_file, filenames), total=len(filenames), initial=filenames.index('A.csv')))
+
+    with open('bad_stocks_ohlc.json', 'w') as file:
+        # Save the list to a file
+        json.dump(bad_stocks, file)
 
 
 def get_ohlc(individual_stock=None):
