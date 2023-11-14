@@ -71,9 +71,9 @@ def graph_window_turtle(start_date, end_date, stock_name, strategy):
     # Create combined legend
     plt.legend(handles=handles, loc='upper left')
 
-    plt.ylabel('Return Close')
-    plt.xlabel('date')
-    plt.title(f'{stock_name} Bollinger Bands and Trades Dynamic SL')
+    plt.ylabel('Price Close')
+    plt.xlabel('Date')
+    plt.title(f'{stock_name} Turtle Trades')
     plt.tight_layout()
     plt.show()
 
