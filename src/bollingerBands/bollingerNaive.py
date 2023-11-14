@@ -43,7 +43,11 @@ class BollingerNaive(StockAlgorithmDaily):
         self.previous_prices = None
         self.leverage = 1
         self.vars = {}
+
+        # Not being used currently for anything
         self.actions = []
+        #
+
         self.identifier = identifier
         self.time_period = time_period
         self.band_data = band_data_name
@@ -171,17 +175,19 @@ class BollingerNaive(StockAlgorithmDaily):
         """
         sl_upper_band = self.df.iloc[self.step][f'Upper_Band_3SD_{self.band_data}']
         sl_lower_band = self.df.iloc[self.step][f'Lower_Band_3SD_{self.band_data}']
-        
+
         if action_str == 'EnterLong' and self.in_trade:
             raise ValueError("Cannot enter long while in trade")
-        
+
         if action_str == 'EnterShort' and self.in_trade:
             raise ValueError("Cannot enter short while in trade")
 
         if action_str == 'EnterLong':
+            self.actions.append(1)
             self.start_position('long')
             self.stop_loss_price = sl_lower_band
         elif action_str == 'EnterShort':
+            self.actions.append(-1)
             self.start_position('short')
             self.stop_loss_price = sl_upper_band
         elif action_str == 'ExitLong' or action_str == 'ExitShort':
@@ -200,51 +206,27 @@ class BollingerNaive(StockAlgorithmDaily):
         Args:
             action (str): The action to start the position ('long' or 'short').
         """
-
+        self.curr_price = self.df.iloc[self.step]['Close']
         previous_prices_index = max(0, self.step - 50)
         self.previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
+        self.in_trade = True
+        self.enter_trade_date = str(self.df.iloc[self.step]["date"])
+        self.exit_trade_date = None
+
+        if self.time_period != 'Daily':
+            self.enter_trade_time = '160000'
+        else:
+            self.enter_trade_time = self.step
+        self.exit_trade_time = None
+        self.enter_trade_price = self.curr_price
+        self.exit_trade_price = None
 
         if action == 'long':
-            self.in_trade = True
-            self.enter_trade_date = str(self.df.iloc[self.step]["date"])
-            self.exit_trade_date = None
-
-            if self.time_period != 'Daily':
-                self.enter_trade_time = 'NA'
-            else:
-                self.enter_trade_time = self.step
-
-            self.exit_trade_time = None
-            self.exit_trade_price = None
-
-            self.curr_price = self.df.iloc[self.step]['Close']
-
-            self.enter_trade_price = self.curr_price
             self.trade_direction = 'long'
             self.band_entry_type = 'lower'
-
-            self.actions.append(1)
-
         elif action == 'short':
-            self.in_trade = True
-            self.enter_trade_date = str(self.df.iloc[self.step]["date"])
-            self.exit_trade_date = None
-
-            if self.time_period != 'Daily':
-                self.enter_trade_time = '160000'
-            else:
-                self.enter_trade_time = self.step
-
-            self.exit_trade_time = None
-            self.exit_trade_price = None
-
-            self.curr_price = self.df.iloc[self.step]['Close']
-
-            self.enter_trade_price = self.curr_price
             self.trade_direction = 'short'
             self.band_entry_type = 'upper'
-
-            self.actions.append(-1)
         else:
             raise ValueError(f"Invalid position type {action}.")
 
@@ -275,38 +257,37 @@ class BollingerNaive(StockAlgorithmDaily):
         exit_price = self.exit_trade_price
         trade_type = self.trade_direction
         leverage = self.leverage
+        previous_prices = self.previous_prices
 
         self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
                                  start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time,
                                  enter_price=enter_price, exit_price=exit_price, trade_type=trade_type,
                                  leverage=leverage,
-                                 previous_prices=self.previous_prices)
+                                 previous_prices=previous_prices)
 
+        # If the current trade is a long, add 2 too actions, else -2
+        # Note. This(self.actions) is not being used currently
         if trade_type == 'long':
             self.actions.append(2)
-            return_str = 'EndLong'
         elif trade_type == 'short':
             self.actions.append(-2)
-            return_str = 'EndShort'
         else:
             raise ValueError(f"Invalid position type {trade_type}.")
+        #
 
         self.in_trade = False
         self.enter_trade_date = None
         self.exit_trade_date = None
         self.enter_trade_time = None
         self.exit_trade_time = None
-
         self.enter_trade_price = None
         self.exit_trade_price = None
         self.trade_direction = None
         self.band_entry_type = None
-
         self.curr_price = None
+        self.stop_loss_price = None
         self.previous_prices = None
         self.leverage = 1
-
-        return return_str
 
     def update_step(self, new_step):
         """

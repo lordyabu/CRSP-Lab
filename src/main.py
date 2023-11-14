@@ -6,7 +6,7 @@ do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
 do_band_calculation = False
-run_bollinger_trades = False
+run_bollinger_trades = True
 do_window_calculation = False
 run_turtle_trades = True
 
@@ -91,7 +91,7 @@ if run_bollinger_trades:
     print("running bollinger")
     from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
 
-    run_all_bollinger_trades('test8bollinger')
+    run_all_bollinger_trades('test10bollinger')
 
 
 if do_window_calculation:

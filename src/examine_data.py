@@ -2,7 +2,6 @@
 # It utilizes various functions for extracting trades, plotting comprehensive analyses, and graphing specific trading windows.
 # Key functionalities include extracting trade data, getting trade statistics, plotting wins and losses,
 # and visualizing trade data for Bollinger Bands and Turtle trading strategies within specified time windows.
-# This script is a comprehensive tool for traders and analysts to evaluate the performance of these trading strategies.
 
 from src.tradeAnalysis.getGraphs import plot_everything
 from src.tradeAnalysis.getStats import get_trade_stats, plot_wins_and_losses
