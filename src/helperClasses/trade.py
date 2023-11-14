@@ -2,6 +2,36 @@ from dataclasses import dataclass
 
 @dataclass
 class Trade:
+    """
+    Represents a trade with various details such as identifiers, strategy, dates, prices, and trade type.
+
+    This class uses the dataclass decorator for simplified attribute management and includes methods for
+    calculating profit and loss and its percentage. It also performs type validation for each attribute.
+
+    Attributes:
+        identifier (str): Unique identifier for the trade.
+        time_period (str): Time period of the trade.
+        strategy (str): Trading strategy used.
+        symbol (str): Stock symbol.
+        start_date (str): Start date of the trade.
+        end_date (str): End date of the trade.
+        start_time (int): Start time of the trade.
+        end_time (int): End time of the trade.
+        enter_price (float): Price at which the trade was entered.
+        exit_price (float): Price at which the trade was exited.
+        trade_type (str): Type of trade - 'long' or 'short'.
+        leverage (float): Leverage used in the trade, defaults to 1.
+        previous_prices (list): Previous 50 prices, optional.
+
+    Properties:
+        datetime: Returns a string representation combining start and end dates with times.
+        pnl: Calculates the profit or loss of the trade.
+        pnl_percent: Calculates the profit or loss percentage relative to the enter or exit price.
+
+    Methods:
+        __repr__: Returns a formatted string representation of the Trade instance.
+        __post_init__: Validates the types of the attributes and raises appropriate errors.
+    """
     identifier: str
     time_period: str
     strategy: str
@@ -14,7 +44,7 @@ class Trade:
     exit_price: float
     trade_type: str  # 'long' or 'short'
     leverage: float = 1
-    previous_prices: list = None  # New attribute to hold the previous 50 prices
+    previous_prices: list = None
 
     @property
     def datetime(self):
@@ -26,6 +56,7 @@ class Trade:
         if self.trade_type == 'long':
             return (self.exit_price - self.enter_price) * self.leverage
         elif self.trade_type == 'short':
+            # As shorts exit_price is basically a long entry
             return (self.enter_price - self.exit_price) * self.leverage
         else:
             raise ValueError("Trade type must be either 'long' or 'short'")

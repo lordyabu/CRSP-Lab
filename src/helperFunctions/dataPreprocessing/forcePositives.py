@@ -1,7 +1,28 @@
+# This script contains a function to process CSV files in a given directory, ensuring that certain numeric values are positive.
+# It reads each file, converts negative values in specific columns to their absolute values, and saves the modified data to an output directory.
+# It also tracks processed files and returns a log entry with details of the operation.
+
 import os
 import pandas as pd
 from datetime import datetime
+
+
 def force_positives(directory, output_directory):
+    """
+    Processes CSV files in a directory to ensure specific numeric columns only contain positive values.
+
+    This function iterates over all CSV files in the given directory, modifies any negative values in 'OPENPRC' and 'PRC' columns
+    to their absolute values, and saves the updated files to a specified output directory. It also keeps track of the files processed
+    and returns a log entry with the details of this operation.
+
+    Args:
+        directory (str): Path to the directory containing the CSV files to be processed.
+        output_directory (str): Path to the directory where the processed files will be saved.
+
+    Returns:
+        dict: A log entry containing details of the operation, including the operation name, processed files,
+              output directory, and a timestamp.
+    """
     processed_files = []  # Keep track of processed files
 
     for filename in os.listdir(directory):

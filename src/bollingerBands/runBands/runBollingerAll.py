@@ -2,10 +2,21 @@ from src.config import DATA_DIR
 from src.bollingerBands.bollingerNaive import BollingerNaive
 import os
 import json
-from tqdm import tqdm  # Import tqdm
+from tqdm import tqdm
 
 
 def run_all_bollinger_trades(identifier):
+    """
+    Executes Bollinger Band-based trading strategies across a list of valid stocks.
+
+    This function reads a list of valid stock filenames and applies the BollingerNaive trading strategy to each.
+    For each stock, it iteratively makes trading decisions, processes actions, and updates steps based on the state
+    of the trading data until the end of the dataset. The trade log for each stock is then saved.
+
+    Args:
+        identifier (str): A unique identifier for the trading session or strategy.
+    """
+
     json_file_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
     with open(json_file_path, 'r') as json_file:
         data = json.load(json_file)

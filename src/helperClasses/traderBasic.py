@@ -5,41 +5,47 @@ from datetime import datetime
 from src.config import DATA_DIR
 from src.helperClasses.tradeLog import TradeLog
 from abc import ABC, abstractmethod
-from src.helperFunctions.getTradeLogPath import get_full_tradelog_path
+from src.helperFunctions.tradeLog.getTradeLogPath import get_full_tradelog_path
 
 class StockAlgorithmDaily(ABC):
-    def __init__(self, stock_name, folder_name=None, reset_indexes=False, step=0, rolling_window_length=-1):
+    """
+    Abstract base class for daily stock trading algorithms.
+
+    This class provides a framework for implementing stock trading algorithms, including methods for data loading,
+    action processing, step updating, and trade log saving. It maintains the state and history of actions, manages the trade log,
+    and calculates total profit and loss (PnL).
+
+    Attributes:
+        stock_name (str): Name of the stock.
+        df (pandas.DataFrame): DataFrame holding the stock data.
+        trade_log (TradeLog): Instance of TradeLog for logging trades.
+        reset_indexes (bool): Flag to reset DataFrame indexes.
+        step (int): Current step in the algorithm.
+        action_history (list): List to track the history of actions.
+        total_pnl (float): Total profit and loss.
+
+    Abstract Methods:
+        __str__: Return a string representation of the algorithm's state.
+        __repr__: Return a string representation of the algorithm for debugging.
+        get_state: Retrieve the current state of the algorithm.
+        get_action: Determine the next action for the algorithm.
+        process_action: Process an action given by the algorithm.
+        update_step: Update the step of the algorithm.
+
+    Methods:
+        save_tradelog: Saves the trade log to a CSV file.
+        load_data: Loads the stock data from a CSV file.
+    """
+    def __init__(self, stock_name, folder_name=None, reset_indexes=False, step=0):
         self.stock_name = stock_name
         self.df = None
-
-
         self.trade_log = TradeLog()
-
         self.reset_indexes = reset_indexes
-
-
-
-        # Starting at time = 0
         self.step = step
 
-        # Rolling window length
         assert isinstance(step, int)
 
-
-        self.rolling_window_length = rolling_window_length
-
-        # DO AFTER DATACLASS ---------------------------------------
-        if self.step == 0:
-            if self.rolling_window_length > self.step:
-                # THROW WARNING
-                print("Setting step to ")
-                self.step = self.rolling_window_length
-        self.action_history = []
-        # ----------------------------------------------------------
-
         self.total_pnl = 0
-
-        # Loads self.df
         self.load_data(file_dir=folder_name)
 
     @abstractmethod
@@ -70,9 +76,6 @@ class StockAlgorithmDaily(ABC):
 
     def save_tradelog(self):
         df = self.trade_log.get_trade_dataframe()
-
-        # Assume get_full_tradelog_path is a function that returns the full path
-        # to where you want to save the trade log CSV file
         full_tradelog_path = get_full_tradelog_path()
 
         # Check if the full trade log CSV already exists
@@ -101,7 +104,18 @@ class StockAlgorithmDaily(ABC):
         updated_tradelog_df.to_csv(full_tradelog_path, index=False)
 
     def load_data(self, file_dir):
-        """Loads data from a file if the stock name is valid. For validity rules see findTimespanStocks.py"""
+        """
+        Loads stock data from a specified directory.
+
+        This method loads data for a given stock, filters it based on a date range, and asserts the data length matches the expected number of timesteps.
+        It raises an exception if the stock is not in the list of valid stock filenames.
+
+        Args:
+            file_dir (str): The directory where the stock data is stored.
+
+        Raises:
+            ValueError: If the stock name is not in the list of valid stock filenames.
+        """
 
         # Load valid filenames, date range, and num_timesteps
         valid_filenames_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
@@ -117,7 +131,6 @@ class StockAlgorithmDaily(ABC):
             file_path = os.path.join(DATA_DIR, f'{file_dir}', f'{self.stock_name}.csv')
             data = pd.read_csv(file_path)
 
-            # data['Date'] = pd.to_datetime(data['Day'].str.replace('Day_', ''), format='%Y%m%d')
             data['Date'] = pd.to_datetime(data['date'], format='%Y%m%d')
 
             # Filter data based on date range
@@ -134,11 +147,3 @@ class StockAlgorithmDaily(ABC):
             raise ValueError(f"Stock name {self.stock_name} is not in the list of valid stock filenames.")
 
 
-# Usage
-# try:
-#     stock_algorithm = StockAlgorithmDaily(stock_name="AAPL", reset_indexes=False)
-#     print(stock_algorithm.df)
-#     stock_algorithm_two = StockAlgorithmDaily(stock_name="ACM", reset_indexes=True)
-#     print(stock_algorithm_two.df)
-# except ValueError as e:
-#     print(e)

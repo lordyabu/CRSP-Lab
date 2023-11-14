@@ -1,10 +1,10 @@
 import unittest
-from config import DATA_DIR
+from src.config import DATA_DIR
 import os
 import pandas as pd
 
-return_data_path = os.path.join(DATA_DIR, 'dataDailyTwoCol', 'AAPL.csv')
-trade_data_path = os.path.join(DATA_DIR, 'tradeData', 'allTrades_20100104_to_20201231.csv')
+return_data_path = os.path.join(DATA_DIR, 'priceDataSplit', 'AAPL.csv')
+trade_data_path = os.path.join(DATA_DIR, 'tradeData', 'allTrades_20100104_to_20201231_example.csv')
 
 class BollingerTests(unittest.TestCase):
 

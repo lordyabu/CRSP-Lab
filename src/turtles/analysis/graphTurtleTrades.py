@@ -1,3 +1,7 @@
+# This script includes the 'graph_window_turtle' function, which provides a visualization tool for analyzing Turtle trading strategy
+# applied to a specific stock over a selected time period. The function plots key elements of the strategy, including Rolling Maxes/Mins and
+# trade entry and exit points, on a stock's price chart.
+
 import matplotlib.pyplot as plt
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import pandas as pd
@@ -6,7 +10,7 @@ import matplotlib.patches as mpatches
 def graph_window_turtle(start_date, end_date, stock_name, strategy):
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
-    # Load the Bollinger Bands data
+    # Load the Turtles  data
     df_turt = pd.read_csv(r'C:\Users\theal\Documents\CrspData\turtleData\{}.csv'.format(stock_name))
 
     # Convert 'date' to datetime and filter based on the window
@@ -19,7 +23,7 @@ def graph_window_turtle(start_date, end_date, stock_name, strategy):
     # Filter trades based on the window
     trades = trades[(trades['StartDate'] >= start_date) & (trades['EndDate'] <= end_date)]
 
-    # Plot Bollinger Bands
+    # Plot Turtle specific data
     plt.figure(figsize=(12, 6))
     plt.plot(df_turt['date'], df_turt['Close'], color='blue', label='Close')
     plt.plot(df_turt['date'], df_turt['Rolling_Max_20'], color='#404040', label='Rolling Max 20')  # Dark gray

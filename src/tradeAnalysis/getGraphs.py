@@ -1,10 +1,14 @@
+# This script contains a suite of visualization functions for trade data analysis. Each function takes trade data as input
+# and creates various plots to analyze different aspects of trading performance. Functions include plotting histograms of
+# logarithmic returns, cumulative returns over time, rolling volatility, and Sharpe ratios, as well as drawdowns,
+# underwater charts, and distributions of monthly and annual returns.
+
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 
 
-# Looks good
 def plot_log_return_histogram(trades):
     trades['LogReturn'] = np.log(trades['PnL%'] / trades['PnL%'].shift(1))
     trades = trades.replace([np.inf, -np.inf], np.nan).dropna(subset=['LogReturn'])
@@ -14,7 +18,7 @@ def plot_log_return_histogram(trades):
     plt.ylabel('Frequency')
     plt.show()
 
-# Looks good
+
 def plot_cumulative_returns(trades):
     # Sort the DataFrame by 'EndDate' in ascending order
     trades = trades.sort_values(by='EndDate')
@@ -30,7 +34,7 @@ def plot_cumulative_returns(trades):
     plt.ylabel('Cumulative Return')
     plt.show()
 
-# Looks good
+
 def plot_cumulative_returns_and_trades(trades):
     trades = trades.sort_values(by='EndDate')
 
@@ -73,7 +77,6 @@ def plot_cumulative_returns_and_trades(trades):
     plt.show()
 
 
-# Looks good
 def plot_rolling_volatility(trades):
     # Assuming 21 trading days in a month, for a 6-month window
     window_size = 21 * 6
@@ -90,7 +93,7 @@ def plot_rolling_volatility(trades):
     plt.ylabel('Volatility')
     plt.show()
 
-# Looks good
+
 def plot_rolling_sharpe_ratio(trades):
     # Assuming 21 trading days in a month, for a 6-month window
     window_size = 21 * 6
@@ -116,7 +119,6 @@ def plot_rolling_sharpe_ratio(trades):
     plt.show()
 
 
-# Looks good
 def plot_drawdowns_over_time(trades):
     trades = trades.sort_values(by='EndDate')
     trades['CumulativeReturn'] = trades['PnL%'].cumsum()
@@ -130,7 +132,7 @@ def plot_drawdowns_over_time(trades):
     plt.ylabel('Drawdown')
     plt.show()
 
-# Looks good
+
 def calculate_drawdowns(trades):
     trades = trades.sort_values(by='EndDate')
     trades['CumulativeReturn'] = trades['PnL%'].cumsum()
@@ -138,7 +140,7 @@ def calculate_drawdowns(trades):
     trades['Drawdown'] = (trades['CumulativeReturn'] - trades['Peak']) / trades['Peak']
     return trades
 
-# Looks good
+
 def plot_underwater_chart(trades):
     drawdowns = calculate_drawdowns(trades)
     drawdowns_filtered = drawdowns.iloc[250:]
@@ -149,7 +151,7 @@ def plot_underwater_chart(trades):
     plt.fill_between(drawdowns_filtered['EndDate'], drawdowns_filtered['Drawdown'], color='blue', alpha=0.3)
     plt.show()
 
-# Looks good
+
 def plot_monthly_returns(trades):
     # Ensure 'EndDate' is in datetime format
     if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
@@ -168,7 +170,7 @@ def plot_monthly_returns(trades):
     plt.ylabel('Total Return %')
     plt.show()
 
-# Looks good
+
 def plot_annual_returns(trades):
     # Ensure 'EndDate' is in datetime format
     if not pd.api.types.is_datetime64_any_dtype(trades['EndDate']):
@@ -196,8 +198,6 @@ def plot_distribution_of_monthly_returns(trades):
     # Extract the month from 'EndDate'
     trades['Month'] = trades['EndDate'].dt.to_period('M')
 
-
-
     # Group by month and sum the 'PnL%'
     monthly_total_returns = trades.groupby('Month')['PnL%'].sum()
 
@@ -213,7 +213,6 @@ def plot_distribution_of_monthly_returns(trades):
     plt.xlabel('Average Monthly Return(%)')
     plt.ylabel('Frequency')
     plt.show()
-
 
 
 def plot_distribution_of_annual_returns(trades):
@@ -240,6 +239,7 @@ def plot_distribution_of_annual_returns(trades):
     plt.ylabel('Frequency')
     plt.show()
 
+
 # Looks good
 def plot_return_quantiles(trades):
     # Calculate the desired quantiles of 'PnL%'
@@ -261,27 +261,15 @@ def plot_everything(trades_df, start_date, end_date):
     # Filter the DataFrame for trades within the specified date range
     trades_df = trades_df[(trades_df['EndDate'] >= start_date) & (trades_df['EndDate'] <= end_date)]
 
-
     plot_log_return_histogram(trades_df)
     plot_cumulative_returns(trades_df)
     plot_cumulative_returns_and_trades(trades_df)
     plot_rolling_volatility(trades_df)
     plot_rolling_sharpe_ratio(trades_df)
-    # plot_drawdowns_over_time(trades_df)
-    # plot_underwater_chart(trades_df)
+    # plot_drawdowns_over_time(trades_df) - Need to debug
+    # plot_underwater_chart(trades_df) - Need to debug
     plot_monthly_returns(trades_df)
     plot_annual_returns(trades_df)
     plot_distribution_of_monthly_returns(trades_df)
     plot_distribution_of_annual_returns(trades_df)
     plot_return_quantiles(trades_df)
-
-# trades_df = extract_trades('test2turtles', 'EndDate', trade_type='long')
-#
-# print(len(trades_df.index))
-#
-#
-#
-#
-# trades_df = trades_df.sort_values(by='EndDate')
-#
-# plot_everything(trades_df)

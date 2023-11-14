@@ -1,8 +1,20 @@
 % Load your dataset
 load('Rosettaupdated.mat');
 
+% Create adjusted price columns for the entire dataset by dividing with CFACPR
+CRSP.AdjustedPRC = CRSP.PRC ./ CRSP.CFACPR;
+CRSP.AdjustedOPENPRC = CRSP.OPENPRC ./ CRSP.CFACPR;
+
+% Replace NaNs and Infs (which might result from division by zero)
+CRSP.AdjustedPRC(isnan(CRSP.AdjustedPRC) | isinf(CRSP.AdjustedPRC)) = NaN;
+CRSP.AdjustedOPENPRC(isnan(CRSP.AdjustedOPENPRC) | isinf(CRSP.AdjustedOPENPRC)) = NaN;
+
+% Rename the adjusted columns to PRC and OPENPRC
+CRSP.PRC = CRSP.AdjustedPRC;
+CRSP.OPENPRC = CRSP.AdjustedOPENPRC;
+
 % Create the priceData directory if it doesn't exist
-output_folder = 'priceData';
+output_folder = 'priceDataRAW';
 if ~exist(output_folder, 'dir')
     mkdir(output_folder);
 end
@@ -18,12 +30,12 @@ end
 unique_tickers = unique(strtrim(tickers));
 unique_tickers(strcmp(unique_tickers, '<undefined>')) = [];
 
-% Define the columns to save
+% Define the columns to save (now adjusted PRC and OPENPRC)
 columns_to_save = {'date', 'TICKER', 'PRC', 'RET', 'OPENPRC'};
 
 % Loop through each unique ticker
 for i = 1:length(unique_tickers)
-    ticker = unique_tickers{i};
+    ticker = unique_tickers(i);
     
     % Skip iteration if ticker is '<undefined>' or empty
     if strcmp(ticker, '<undefined>') || isempty(ticker)
@@ -32,7 +44,7 @@ for i = 1:length(unique_tickers)
     end
     
     % Print the current ticker being processed
-    fprintf('Processing ticker: %s\n', ticker);
+    fprintf('Processing ticker: %s\n', ticker{1});
     
     % Filter the data for the current ticker
     ticker_data = CRSP(strcmp(tickers, ticker), :);
@@ -42,24 +54,18 @@ for i = 1:length(unique_tickers)
     
     % Sort the data by date in ascending order
     ticker_data = sortrows(ticker_data, 'date');
-    
-    % Find the last indices where PRC, RET, or OPENPRC is NaN and remove them
-    last_valid_index = find(~isnan(ticker_data.PRC) & ~isnan(ticker_data.RET) & ~isnan(ticker_data.OPENPRC), 1, 'last');
-    if ~isempty(last_valid_index) && last_valid_index < height(ticker_data)
-        ticker_data = ticker_data(1:last_valid_index, :);
-    end
 
     % Check if data for this ticker is empty and print a message if it is
     if isempty(ticker_data)
-        fprintf('No data for ticker: %s, skipping...\n', ticker);
+        fprintf('No data for ticker: %s, skipping...\n', ticker{1});
         continue;
     end
     
     % Print the number of rows being saved for the current ticker
-    fprintf('Saving %d rows for ticker: %s\n', height(ticker_data), ticker);
+    fprintf('Saving %d rows for ticker: %s\n', height(ticker_data), ticker{1});
 
     % Define the filename for the CSV
-    filename = fullfile(output_folder, strcat(ticker, '.csv'));
+    filename = fullfile(output_folder, strcat(ticker{1}, '.csv'));
 
     % Save the filtered data to a CSV file named after the ticker
     writetable(ticker_data, filename);

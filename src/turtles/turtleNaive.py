@@ -1,60 +1,65 @@
+# The TurtleNaive class, extending StockAlgorithmDaily, implements a simplified Turtle trading strategy for stock markets.
+# It manages trading positions, decision-making based on market state, and execution of trading actions in line with the Turtle strategy.
+# Key features include tracking and updating long and short positions, determining trade actions based on rolling window calculations,
+# processing these actions, and maintaining a step-wise approach through the trading dataset.
+# The class is designed to simulate and analyze the Turtle trading strategy's performance for specific stocks over time.
+
 from src.helperClasses.unit import Unit
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import DATA_DIR
+from src.config import DATA_DIR, TURTLE_DATA_NAME
 import os
 import pandas as pd
 
 class TurtleNaive(StockAlgorithmDaily):
 
-    def __init__(self, stock_name, rolling_window_name='Default', identifier=-1, time_period='Daily', reset_indexes=False, step=0):
+    def __init__(self, stock_name, identifier=-1, time_period='Daily', reset_indexes=False, step=0):
+        """
+        Initializes the TurtleNaive trading strategy instance.
+
+        Args:
+            stock_name (str): The name of the stock to be traded.
+            identifier (int or str): Unique identifier for the trading session. Defaults to -1.
+            time_period (str): The time period for trading (e.g., 'Daily'). Defaults to 'Daily'.
+            reset_indexes (bool): Whether to reset DataFrame indexes. Defaults to False.
+            step (int): Initial step or time period in the trading data. Defaults to 0.
+        """
+
         # Initialize the superclass
-        self.trade_log_dir_full = os.path.join(DATA_DIR, 'tradeData')
-
-        try:
-            self.trade_log_dir_ticker = os.path.join(DATA_DIR, 'tradeData', 'allTrades.csv')
-        except:
-            # Make folder first then try directory
-            pass
+        super().__init__(stock_name = stock_name, folder_name=TURTLE_DATA_NAME,reset_indexes = reset_indexes, step = step)
 
 
-        super().__init__(stock_name = stock_name, folder_name='turtleData',reset_indexes = reset_indexes, step = step)
+        # There are less state variables for turtles because using Unit class for trades found in
+        # helperClasses/Unit
 
         self.in_trade = False
-
         self.active_trades = []
-
         self.long_units = []
         self.short_units = []
-
         self.num_short_units_bought = 0
         self.num_long_units_bought = 0
-
-
         self.curr_price = None
-
         self.leverage = 1
-
         self.vars = {}
-
         self.actions = []
-
         self.identifier = identifier
         self.time_period = time_period
-        self.rolling_window_data = rolling_window_name
-
         self.strategy = "turtle_naive"
 
 
     def __str__(self):
-        # Provide a meaningful string representation of this class
         return f"TurtleNaive"
 
     def __repr__(self):
-        # Provide a string that could be used to recreate this object
-        return f"Turtle(stock_name='{self.stock_name}', reset_indexes={self.reset_indexes}, step={self.step}, rolling_window_length={self.rolling_window_length})"
+        return f"Turtle(stock_name='{self.stock_name}', reset_indexes={self.reset_indexes}, step={self.step})"
 
     # State at which to determine action from
     def get_state(self):
+        """
+        Retrieves the current state of the market for decision-making.
+
+        Returns:
+            dict: A dictionary containing the current market state, including prices and rolling window values.
+        """
         date = self.df['date'].iloc[self.step]
 
         rolling_min_ten = self.df['Rolling_Min_10'].iloc[self.step]
@@ -84,47 +89,50 @@ class TurtleNaive(StockAlgorithmDaily):
 
     # Based on the above state, determine action
     def get_action(self, state):
+        """
+        Determines the trading action to take based on the current market state.
+
+        Args:
+            state (dict): The current state of the market.
+
+        Returns:
+            list: A list of actions to be taken.
+        """
         action_list = []
 
-        # Assuming 'Date' is a key in your state dictionary representing the current day
-        current_day = state['Date']
-
         if pd.isna(state['RollingMax20']):
-            # print(f"{current_day}: RollingMax20 is NA, deciding to Wait")
             action_list.append('Wait')
             self.actions.append((state['Date'], action_list))
             return action_list
 
         if state['CurrentPrice'] > state['RollingMax20']:
-            # print(
-            #     f"{current_day}: CurrentPrice {state['CurrentPrice']} is greater than RollingMax20 {state['RollingMax20']}, deciding to EnterLong")
             action_list.append('EnterLong')
 
         if state['CurrentPrice'] < state['RollingMin20']:
-            # print(
-            #     f"{current_day}: CurrentPrice {state['CurrentPrice']} is less than RollingMin20 {state['RollingMin20']}, deciding to EnterShort")
             action_list.append('EnterShort')
 
         if state['CurrentPrice'] > state['RollingMax10']:
             if len(state['ShortUnits']) > 0:
-                # print(
-                #     f"{current_day}: CurrentPrice {state['CurrentPrice']} is greater than RollingMax10 {state['RollingMax10']} and there are short positions, deciding to ExitShort")
                 action_list.append('ExitShort')
 
         if state['CurrentPrice'] < state['RollingMin10']:
             if len(state['LongUnits']) > 0:
-                # print(
-                #     f"{current_day}: CurrentPrice {state['CurrentPrice']} is less than RollingMax10 {state['RollingMax10']} and there are long positions, deciding to ExitLong")
                 action_list.append('ExitLong')
 
         if len(action_list) == 0:
-            # print(f"{current_day}: No conditions met, deciding to Wait")
             action_list.append('Wait')
 
         self.actions.append((state['Date'], action_list))
         return action_list
 
     def process_action(self, actions, curr_price):
+        """
+        Processes the given trading actions.
+
+        Args:
+            actions (list): A list of actions to be processed.
+            curr_price (float): The current price of the stock.
+        """
         curr_date = str(self.df.iloc[self.step]["date"])
         if self.time_period == 'Daily':
             curr_time = 0
@@ -202,13 +210,24 @@ class TurtleNaive(StockAlgorithmDaily):
 
 
     def clear_long_positions(self):
+        """
+        Clears all long positions.
+        """
         self.long_units = []
 
 
     def clear_short_positions(self):
+        """
+        Clears all short positions.
+        """
         self.short_units = []
 
 
     def update_step(self, new_step):
-        # Update the step (time period) for the strategy
+        """
+        Updates the current step in the trading strategy.
+
+        Args:
+            new_step (int): The new step or time period to update to.
+        """
         self.step = new_step

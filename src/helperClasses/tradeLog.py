@@ -2,24 +2,78 @@ from src.helperClasses.trade import Trade
 from dataclasses import dataclass, field
 import pandas as pd
 
+
 @dataclass
 class TradeLog:
+    """
+    Represents a log of trading operations, managing a collection of 'Trade' objects.
+
+    This class provides methods to add new trades to the log, calculate the total profit and loss (PnL),
+    the total PnL percentage, and to export the trade data into a Pandas DataFrame for further analysis.
+
+    Attributes:
+        trades (list of Trade): A list to store 'Trade' objects.
+
+    Methods:
+        add_trade: Adds a new trade to the log.
+        get_total_pnl: Calculates the total PnL from all trades in the log.
+        get_total_pnl_percent: Calculates the total PnL percentage from all trades in the log.
+        get_trade_dataframe: Converts the trade log into a Pandas DataFrame.
+    """
     trades: list = field(default_factory=list)
 
-    def add_trade(self, identifier, time_period, strategy, symbol, start_date, end_date, start_time, end_time, enter_price, exit_price, trade_type, leverage=1, previous_prices=None):
-        trade = Trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol, start_date=start_date, end_date=end_date,
-                      start_time=start_time, end_time=end_time, enter_price=enter_price, exit_price=exit_price, trade_type=trade_type,
+    def add_trade(self, identifier, time_period, strategy, symbol, start_date, end_date, start_time, end_time,
+                  enter_price, exit_price, trade_type, leverage=1, previous_prices=None):
+        """
+        Adds a new trade to the trade log.
+
+        Args:
+            identifier (str): Unique identifier for the trade.
+            time_period (str): Time period of the trade.
+            strategy (str): Trading strategy used.
+            symbol (str): Stock symbol.
+            start_date (str): Start date of the trade.
+            end_date (str): End date of the trade.
+            start_time (int): Start time of the trade.
+            end_time (int): End time of the trade.
+            enter_price (float): Price at which the trade was entered.
+            exit_price (float): Price at which the trade was exited.
+            trade_type (str): Type of trade ('long' or 'short').
+            leverage (float): Leverage used in the trade, defaults to 1.
+            previous_prices (list, optional): Previous prices related to the trade, defaults to None.
+        """
+        trade = Trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
+                      start_date=start_date, end_date=end_date,
+                      start_time=start_time, end_time=end_time, enter_price=enter_price, exit_price=exit_price,
+                      trade_type=trade_type,
                       leverage=leverage, previous_prices=previous_prices)
         self.trades.append(trade)
 
     def get_total_pnl(self):
+        """
+        Calculates the total profit and loss (PnL) from all trades in the log.
+
+        Returns:
+            float: The total PnL from all trades.
+        """
         return sum(trade.pnl for trade in self.trades)
 
-
     def get_total_pnl_percent(self):
+        """
+        Calculates the total profit and loss (PnL) percentage from all trades in the log.
+
+        Returns:
+            float: The total PnL percentage from all trades.
+        """
         return sum(trade.pnl_percent for trade in self.trades)
 
     def get_trade_dataframe(self):
+        """
+        Converts the trade log into a Pandas DataFrame for analysis.
+
+        Returns:
+            pandas.DataFrame: A DataFrame containing the data from all trades in the log.
+        """
         trades_data = []
         for trade in self.trades:
             trade_dict = {
@@ -50,21 +104,3 @@ class TradeLog:
 
         df = pd.DataFrame(trades_data)
         return df
-
-# Create a TradeLog instance
-# trade_log = TradeLog()
-#
-#
-# trade_log.add_trade(date='20201108', time=160000, strategy='bol',symbol="AAPL", enter_price=100, exit_price=110, trade_type="long")
-# trade_log.add_trade(date='20201109', time=90000, strategy='bol',symbol="GOOG", enter_price=1500, exit_price=1400, trade_type="short", leverage=2)
-# trade_log.add_trade(date='20201110', starttime=70000, strategy='bol',symbol="TSLA", enter_price=600, exit_price=650, trade_type="long")
-#
-# # Print out the total PnL
-# print("Total PnL:", trade_log.get_total_pnl())
-#
-# # Get the trade DataFrame and print it
-# trade_df = trade_log.get_trade_dataframe()
-# print(trade_df)
-#
-# # Print out the TradeLog
-# print(trade_log)

@@ -1,15 +1,32 @@
+# This script focuses on trading data analysis, featuring a collection of functions for evaluating trading strategies.
+# 'get_trade_stats' calculates various statistics for trades within a specific date range.
+# 'plot_wins_and_losses' visually represents 100 sample trades, providing insights into trade performance over time.
+# 'rank_stocks_by_pnl' ranks stocks based on their profitability, assisting in identifying the most and least successful stocks in a trading strategy.
+
+
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
 import matplotlib.pyplot as plt
-from src.helperFunctions.dataAnalysis.filterBadTrades import remove_naive
 import pandas as pd
 import json
 from tqdm import tqdm
 from src.config import DATA_DIR
 import os
+
+
 def get_trade_stats(trades, start_date, end_date):
+    """
+    Calculates various statistics for a given set of trades within a specified date range.
+
+    Args:
+        trades (pd.DataFrame): DataFrame containing trade data.
+        start_date (str): The start date for the trade analysis.
+        end_date (str): The end date for the trade analysis.
+
+    Returns:
+        dict: A dictionary containing calculated trade statistics.
+    """
     # Calculate durations
     trades = trades[(trades['EndDate'] >= start_date) & (trades['EndDate'] <= end_date)]
-
 
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']
 
@@ -24,12 +41,16 @@ def get_trade_stats(trades, start_date, end_date):
     win_rate = (len(winning_trades) / total_trades) * 100
     avg_win = winning_trades['PnL%'].mean()
     avg_loss = losing_trades['PnL%'].mean()
-    median_win = winning_trades['PnL%'].median()  # Median win
-    median_loss = losing_trades['PnL%'].median()  # Median loss
+    median_win = winning_trades['PnL%'].median()
+    median_loss = losing_trades['PnL%'].median()
     avg_trade = trades['PnL%'].mean()
-    median_trade = trades['PnL%'].median()  # Median trade
+    median_trade = trades['PnL%'].median()
     total_return = trades['PnL'].sum()
-    total_return_percent = trades['PnL%'].sum()  # Total return percentage
+    total_return_percent = trades['PnL%'].sum()
+    min_exit_price_idx = trades['ExitPrice'].idxmin()
+    min_enter_price_idx = trades['EnterPrice'].idxmin()
+    min_pnl_percent_idx = trades['PnL%'].idxmin()
+    max_pnl_percent_idx = trades['PnL%'].idxmax()
 
     # Print stats
     print(f"Start: {start_date}")
@@ -45,18 +66,9 @@ def get_trade_stats(trades, start_date, end_date):
     print(f"Avg. Loss [%]: {avg_loss}")
     print(f"Median Loss [%]: {median_loss}")
     print(f"Total Return [%] (Where every trade is weighted equally): {total_return_percent}")
-
-    min_exit_price_idx = trades['ExitPrice'].idxmin()
-    min_enter_price_idx = trades['EnterPrice'].idxmin()
-    min_pnl_percent_idx = trades['PnL%'].idxmin()
-    max_pnl_percent_idx = trades['PnL%'].idxmax()
-
-    # Print the minimum values and their corresponding indices
     print(f"Minimum Exit Price: {trades['ExitPrice'].min()}, Index: {min_exit_price_idx}")
     print(f"Minimum Enter Price: {trades['EnterPrice'].min()}, Index: {min_enter_price_idx}")
     print(f"Minimum PnL%: {trades['PnL%'].min()}, Index: {min_pnl_percent_idx}")
-
-    # Print the maximum PnL% and its corresponding index
     print(f"Maximum PnL%: {trades['PnL%'].max()}, Index: {max_pnl_percent_idx}")
 
     return {
@@ -75,7 +87,16 @@ def get_trade_stats(trades, start_date, end_date):
         "Total Return [%]": total_return_percent
     }
 
+
 def plot_wins_and_losses(trades, start_date, end_date):
+    """
+    Plots sample of 100 trades over the timespan
+
+    Args:
+        trades (pd.DataFrame): DataFrame containing trade data.
+        start_date (str): The start date for plotting the data.
+        end_date (str): The end date for plotting the data.
+    """
     trades = trades[(trades['EndDate'] >= start_date) & (trades['EndDate'] <= end_date)]
 
     # Sample 100 random trades if the total number of trades is more than 100
@@ -88,11 +109,11 @@ def plot_wins_and_losses(trades, start_date, end_date):
     winning_trades = trades_sample[trades_sample['PnL'] > 0]
     losing_trades = trades_sample[trades_sample['PnL'] < 0]
 
-    # Plotting
     plt.figure(figsize=(14, 7))
 
     # Plot winning trades in green ($ and %)
-    plt.scatter(winning_trades['EndDate'], winning_trades['PnL%'], color='lightgreen', label='Winning Trades [%]', alpha=1)
+    plt.scatter(winning_trades['EndDate'], winning_trades['PnL%'], color='lightgreen', label='Winning Trades [%]',
+                alpha=1)
 
     # Plot losing trades in red ($ and %)
     plt.scatter(losing_trades['EndDate'], losing_trades['PnL%'], color='pink', label='Losing Trades [%]', alpha=1)
@@ -107,8 +128,18 @@ def plot_wins_and_losses(trades, start_date, end_date):
     plt.show()
 
 
-
 def rank_stocks_by_pnl(identifier, start_date, end_date):
+    """
+    Ranks stocks by total profit and loss (PnL) within a specified date range.
+
+    Args:
+        identifier (str): Identifier for filtering trades.
+        start_date (str): The start date for the trade analysis.
+        end_date (str): The end date for the trade analysis.
+
+    Returns:
+        pd.DataFrame: DataFrame containing stocks ranked by total PnL.
+    """
     json_file_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
     with open(json_file_path, 'r') as json_file:
         data = json.load(json_file)
@@ -131,33 +162,3 @@ def rank_stocks_by_pnl(identifier, start_date, end_date):
     # Rank stocks by 'Total Return [%]'
     ranked_stocks = stats_df.sort_values(by='Total Return [%]', ascending=False)
     return ranked_stocks
-
-
-# Usage
-# trades_df = extract_trades('test2turtles', 'EndDate', trade_type='long')
-#
-#
-#
-# # Define your start and end dates
-# start_date = '2010-01-04'
-# end_date = '2020-12-31'
-# # Call the function with the date range
-# a = get_trade_stats(trades_df, start_date, end_date)
-#
-# min_exit_price_idx = trades_df['ExitPrice'].idxmin()
-# min_enter_price_idx = trades_df['EnterPrice'].idxmin()
-# min_pnl_percent_idx = trades_df['PnL%'].idxmin()
-# max_pnl_percent_idx = trades_df['PnL%'].idxmax()
-#
-# # Print the minimum values and their corresponding indices
-# print(f"Minimum Exit Price: {trades_df['ExitPrice'].min()}, Index: {min_exit_price_idx}")
-# print(f"Minimum Enter Price: {trades_df['EnterPrice'].min()}, Index: {min_enter_price_idx}")
-# print(f"Minimum PnL%: {trades_df['PnL%'].min()}, Index: {min_pnl_percent_idx}")
-#
-# # Print the maximum PnL% and its corresponding index
-# print(f"Maximum PnL%: {trades_df['PnL%'].max()}, Index: {max_pnl_percent_idx}")
-
-
-# df = rank_stocks_by_pnl('test7bollinger', start_date, end_date)
-
-# df.to_csv('bollinger_rankings.csv')
