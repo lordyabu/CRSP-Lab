@@ -34,7 +34,7 @@ Bands are calculated as follows (Bperiods = 19 -> N = 20)
 - Lower Band 3 Standard Deviations (LB3SD): `LB3SD = MB - (2.96 * SD)`
 
 
-## Trade Analysis Results Summary(Dynamic SL)
+## Trade Analysis Results Summary(Dynamic SL) (OUTDATED - Will update soon)
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`
