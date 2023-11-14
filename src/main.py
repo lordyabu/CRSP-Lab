@@ -104,7 +104,7 @@ if run_bollinger_trades:
     print("Running Bollinger Band trades...")
     from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
 
-    run_all_bollinger_trades('testALEXbollinger')
+    run_all_bollinger_trades('test1bollinger')
 
 # ============================
 # Turtle Strategy Calculations
@@ -125,6 +125,6 @@ if run_turtle_trades:
     print("Running Turtles trades...")
     from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
 
-    run_all_turtle_trades('testALEXturtles')
+    run_all_turtle_trades('test1turtles')
 
 print("All operations completed.")
