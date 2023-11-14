@@ -33,10 +33,12 @@ def major_operations(NaNs=False, positive=False, save_to_log=True):
     log_info = []
 
     if NaNs:
-        log_info.append(fill_nan_according_to_rules(directory, output_directory))
+        log_stuffs = fill_nan_according_to_rules(directory, output_directory)
+        log_info.append(log_stuffs)
     if positive:
         input_dir = output_directory if NaNs else directory
-        log_info.append(force_positives(input_dir, output_directory))
+        log_stuffs = force_positives(input_dir, output_directory)
+        log_info.append(log_stuffs)
 
     if save_to_log:
         log_to_json(log_file_path, log_info)
