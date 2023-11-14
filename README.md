@@ -10,7 +10,7 @@ Check /notes for high level documentation notes
   - [majorOperations.py](/src/helperFunctions/dataPreprocessing/majorOperations.py) - Applies major operations to dataset
 
 - OHLC Calculations
-  - [getOHLCfrom5minRet.py](/src/helperFunctions/dataPreprocessing/getOHLCfrom5minRet.py) - Calculates OHLC from 5min return data
+  - [getOHLCfrom5minRet.py](/src/helperFunctions/dataPreprocessing/getOHLCfrom5MinRet.py) - Calculates OHLC from 5min return data
 
 
 - Bollinger Bands Analysis
