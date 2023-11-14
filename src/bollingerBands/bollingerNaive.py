@@ -77,11 +77,7 @@ class BollingerNaive(StockAlgorithmDaily):
         middle_band = self.df.iloc[self.step][f'Middle_Band_{self.band_data}']
 
         curr_close = self.df.iloc[self.step]['Close']
-
-        if self.curr_price is not None:
-            self.curr_price = curr_close
-        else:
-            self.curr_price = None
+        self.curr_price = curr_close
 
         position_type = self.trade_direction
         band_entry = self.band_entry_type
@@ -238,6 +234,7 @@ class BollingerNaive(StockAlgorithmDaily):
             str: A string indicating the type of position that was closed.
         """
         self.exit_trade_date = str(self.df.iloc[self.step]["date"])
+        self.curr_price = self.df.iloc[self.step]['Close']
         self.exit_trade_price = self.curr_price
 
         if self.time_period != 'Daily':
