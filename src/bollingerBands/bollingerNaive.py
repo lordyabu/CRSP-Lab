@@ -178,6 +178,12 @@ class BollingerNaive(StockAlgorithmDaily):
         if action_str == 'EnterShort' and self.in_trade:
             raise ValueError("Cannot enter short while in trade")
 
+        if action_str == 'ExitLong' and not self.in_trade:
+            raise ValueError("Cannot exit long while not in long")
+
+        if action_str == 'ExitShort' and not self.in_trade:
+            raise ValueError("Cannot exit short while not in short")
+
         if action_str == 'EnterLong':
             self.actions.append(1)
             self.start_position('long')
