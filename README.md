@@ -12,7 +12,6 @@ Check /notes for high level documentation notes
 - OHLC Calculations
   - [getOHLCfrom5minRet.py](/src/helperFunctions/dataPreprocessing/getOHLCfrom5MinRet.py) - Calculates OHLC from 5min return data
 
-
 - Timespan
   - [findTimespanStocks.py](/src/helperFunctions/dataPreprocessing/findTimespanStocks.py) - Gets valid stocks for specified timespan
 
