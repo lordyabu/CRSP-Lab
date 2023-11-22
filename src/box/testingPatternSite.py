@@ -13,7 +13,7 @@ from IPython.display import display, Javascript
 
 # Assuming 'data' is a DataFrame with columns 'High', 'Low', and 'Close'
 # Replace this with the actual loading of your data
-path = os.path.join(OHLC_DATA_DIR, 'TSLA.csv')
+path = os.path.join(OHLC_DATA_DIR, 'ABGX.csv')
 data = pd.read_csv(path)  # Replace with your data file
 data['date'] = pd.to_datetime(data['date'], format='%Y%m%d')
 data.set_index('date', inplace=True)
@@ -28,6 +28,7 @@ def find_darvas_boxes_and_signals(data):
 
     i = 0
     while i < len(data):
+        print(i, len(data))
         if data['High'].iloc[i] == yearly_high.iloc[i]:
             box_top_day = i
             box_top = data['High'].iloc[i]
@@ -60,6 +61,8 @@ def find_darvas_boxes_and_signals(data):
                 boxes.append((box_top_day, box_top, box_bottom_day, box_bottom))
                 print((box_top_day, box_top, box_bottom_day, box_bottom))
                 i = box_bottom_day
+                if i + 1 == len(data):
+                    i += 1
             else:
                 i += 1
         else:
@@ -71,8 +74,8 @@ def find_darvas_boxes_and_signals(data):
 
 # Function to plot a specific slice
 def plot_slice(start_date, end_date):
-    # print(data)
-    sliced_data = data.loc[start_date:end_date]
+    # sliced_data = data.loc[start_date:end_date]
+    sliced_data = data
     darvas_boxes, entry_points, exit_points = find_darvas_boxes_and_signals(sliced_data)
 
     plt.figure(figsize=(12, 6))
@@ -107,7 +110,8 @@ def plot_slice(start_date, end_date):
 
 
 def plot_slice_plotly(start_date, end_date):
-    sliced_data = data.loc[start_date:end_date]
+    # sliced_data = data.loc[start_date:end_date]
+    sliced_data = data
     darvas_boxes, entry_points, exit_points = find_darvas_boxes_and_signals(sliced_data)
 
     # Calculate y-axis limits based on the selected slice
@@ -144,5 +148,5 @@ def plot_slice_plotly(start_date, end_date):
 
 
 # Example usage
-plot_slice('2015-01-01', '2015-12-31')  # Adjust these dates for your desired slice
+plot_slice('2003-01-01', '2004-12-31')  # Adjust these dates for your desired slice
 # plot_slice_plotly('2010-01-01', '2020-12-31')
