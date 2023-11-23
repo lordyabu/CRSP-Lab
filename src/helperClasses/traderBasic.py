@@ -6,7 +6,8 @@ from src.config import DATA_DIR
 from src.helperClasses.tradeLog import TradeLog
 from abc import ABC, abstractmethod
 from src.helperFunctions.tradeLog.getTradeLogPath import get_full_tradelog_path
-
+import csv
+from pathlib import Path
 class StockAlgorithmDaily(ABC):
     """
     Abstract base class for daily stock trading algorithms.
@@ -75,33 +76,38 @@ class StockAlgorithmDaily(ABC):
         pass
 
     def save_tradelog(self):
-        df = self.trade_log.get_trade_dataframe()
+        new_trades_df = self.trade_log.get_trade_dataframe()
         full_tradelog_path = get_full_tradelog_path()
 
-        # Check if the full trade log CSV already exists
-        if os.path.exists(full_tradelog_path):
-            # If it exists, read it without setting an index
-            full_tradelog_df = pd.read_csv(full_tradelog_path)
-
-            # Check if 'TradeIndex' is in the columns of the loaded DataFrame
-            if 'TradeIndex' in full_tradelog_df.columns:
-                # If 'TradeIndex' exists, make sure it is the DataFrame index
-                full_tradelog_df.set_index('TradeIndex', inplace=True)
-
-            # Concatenate the new DataFrame to the existing one, aligning on 'TradeIndex'
-            updated_tradelog_df = pd.concat([full_tradelog_df, df]).reset_index(drop=True)
-        else:
-            # If it doesn't exist, the new log is the full log
-            print("Making new full trade-log.")
-            updated_tradelog_df = df
-
-        # Ensure 'TradeIndex' is a column in the DataFrame and set it as the index
-        if 'TradeIndex' not in updated_tradelog_df.columns:
-            updated_tradelog_df.reset_index(inplace=True)
-            updated_tradelog_df.rename(columns={'index': 'TradeIndex'}, inplace=True)
-
-        # Save the updated trade log with 'TradeIndex' as a column
-        updated_tradelog_df.to_csv(full_tradelog_path, index=False)
+        # Append to CSV file
+        new_trades_df.to_csv(full_tradelog_path, mode='a', header=not os.path.exists(full_tradelog_path), index=False)
+        # df = self.trade_log.get_trade_dataframe()
+        # full_tradelog_path = get_full_tradelog_path()
+        #
+        # # Check if the full trade log CSV already exists
+        # if os.path.exists(full_tradelog_path):
+        #     # If it exists, read it without setting an index
+        #     full_tradelog_df = pd.read_csv(full_tradelog_path)
+        #
+        #     # Check if 'TradeIndex' is in the columns of the loaded DataFrame
+        #     if 'TradeIndex' in full_tradelog_df.columns:
+        #         # If 'TradeIndex' exists, make sure it is the DataFrame index
+        #         full_tradelog_df.set_index('TradeIndex', inplace=True)
+        #
+        #     # Concatenate the new DataFrame to the existing one, aligning on 'TradeIndex'
+        #     updated_tradelog_df = pd.concat([full_tradelog_df, df]).reset_index(drop=True)
+        # else:
+        #     # If it doesn't exist, the new log is the full log
+        #     print("Making new full trade-log.")
+        #     updated_tradelog_df = df
+        #
+        # # Ensure 'TradeIndex' is a column in the DataFrame and set it as the index
+        # if 'TradeIndex' not in updated_tradelog_df.columns:
+        #     updated_tradelog_df.reset_index(inplace=True)
+        #     updated_tradelog_df.rename(columns={'index': 'TradeIndex'}, inplace=True)
+        #
+        # # Save the updated trade log with 'TradeIndex' as a column
+        # updated_tradelog_df.to_csv(full_tradelog_path, index=False)
 
     def load_data(self, file_dir):
         """

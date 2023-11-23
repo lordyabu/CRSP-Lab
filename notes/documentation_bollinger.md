@@ -34,7 +34,7 @@ Bands are calculated as follows (Bperiods = 19 -> N = 20)
 - Lower Band 3 Standard Deviations (LB3SD): `LB3SD = MB - (2.96 * SD)`
 
 
-## Trade Analysis Results Summary(Dynamic SL) (OUTDATED - Will update soon)
+## Trade Analysis Results Summary(Dynamic SL)
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`
@@ -42,19 +42,19 @@ Bands are calculated as follows (Bperiods = 19 -> N = 20)
 - **Total Duration**: `4014 days`
 
 **Trading Metrics**
-- **Total Number of Trades**: `99,577`
-- **Number of Different Stocks Traded**: `888`
-- **Win Rate**: `62.90%`
+- **Total Number of Trades**: `125,554`
+- **Number of Different Stocks Traded**: `1120`
+- **Win Rate**: `62.65%`
 
 **Performance Indicators**
-- **Average Trade Return**: `0.67%`
-- **Average Win on Trades**: `5.48%`
-- **Average Loss on Trades**: `-7.54%`
-- **Maximum Trade Duration**: `160 days`
-- **Average Trade Duration**: `18 days, 22 hours, 28 minutes`
+- **Average Trade Return**: `0.624%`
+- **Average Win on Trades**: `5.14%`
+- **Average Loss on Trades**: `-7.00%`
+- **Maximum Trade Duration**: `170 days`
+- **Average Trade Duration**: `18 days, 22 hours, 55 minutes`
 
 **Overall Returns**
-- **Total Return (Weighted Equally per Trade)**: `66,877.27%`
+- **Total Return (Weighted Equally per Trade)**: `78417.35%`
 
 
 
@@ -66,7 +66,7 @@ bollinger_trader = BollingerNaive(self, stock_name, band_data_name='Default', id
 
 
 
-# Bollinger Bands Calculation and Visualization
+# Bollinger Bands Calculation
 
 ## Overview
 This script defines a class `BollingerBands` for calculating and visualizing Bollinger Bands for stock trading data. Bollinger Bands are a volatility indicator that consists of a Simple Moving Average (SMA) and two standard deviation lines, one above and one below the SMA. This script provides functionality for individual stock analysis as well as batch processing of multiple stocks.

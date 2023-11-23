@@ -59,9 +59,13 @@ class DarvasTrader(StockAlgorithmDaily):
         top_box = self.df['Box_Top'].iloc[self.step]
         bottom_box = self.df['Box_Bottom'].iloc[self.step]
 
+
+
         prev_in_box = self.in_box
 
-        if top_box:
+        if pd.isna(top_box):
+            self.in_box = False
+        else:
             self.in_box = True
 
         in_box = self.in_box
@@ -86,19 +90,26 @@ class DarvasTrader(StockAlgorithmDaily):
             'LongUnits': long_units,
             'ShortUnits': short_units
         }
-
         return state_dict
 
 
     def get_action(self, state):
-        if not state['InBox'] and state['PrevInBox']:
-            if state['CurrentPrice'] > state['PreviousPrice']:
-                return "EnterLong"
-            else:
-                return "ExitLong"
-        else:
-            return "Wait"
+        actions = []
 
+        if not state['InBox'] and state['PrevInBox']:
+            # print('here1', state['CurrentPrice'], state['Date'])
+            if state['CurrentPrice'] > state['PreviousPrice']:
+                # print(state['Date'], 'Enter Buy')
+                actions.append('EnterLong')
+            else:
+                if len(self.long_units) > 0:
+                    actions.append('ExitLong')
+                else:
+                    actions.append('Wait')
+        else:
+            actions.append('Wait')
+
+        return actions
     def process_action(self, actions, curr_price):
         """
         Processes the given trading actions.
@@ -151,7 +162,7 @@ class DarvasTrader(StockAlgorithmDaily):
             elif action == 'Wait':
                 pass
             else:
-                raise ValueError("Invalid Action")
+                raise ValueError(f"Invalid Action {action}")
 
     def clear_long_positions(self):
         """

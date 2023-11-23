@@ -1,6 +1,4 @@
-from tqdm import tqdm
-import os
-from src.config import DATA_DIR, BOLLINGER_DATA_DIR, TURTLE_DATA_DIR, OHLC_DATA_DIR
+from src.config import OHLC_DATA_DIR
 
 # Suppressing warnings for cleaner output // Pandas DF slicing
 import warnings
@@ -14,10 +12,14 @@ warnings.filterwarnings('ignore')
 do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
-do_band_calculation = True
+do_band_calculation = False
 run_bollinger_trades = True
-do_window_calculation = True
+do_window_calculation = False
 run_turtle_trades = True
+do_box_calculations = False
+run_box_trades =False
+create_non_trades = False
+
 
 # ======================================================
 # Directory Structure (Ensure this matches your setup) - (If you want to change names go to config.py(don't change helperData or tradeData))
@@ -126,5 +128,36 @@ if run_turtle_trades:
     from src.turtles.runTurtles.runTurtleAll import run_all_turtle_trades
 
     run_all_turtle_trades('test1turtles')
+
+
+# ============================
+# Box Strategy Calculations
+# ============================
+
+if do_box_calculations:
+    from src.boxStrategy.calculateBoxes import DarvasBoxCalculator
+    print("Running Box calculations...")
+    directory = OHLC_DATA_DIR
+    calculator = DarvasBoxCalculator(data_directory=directory)
+    calculator.calculate_all_stock_boxes()
+
+# ======================
+# Running Turtle Trades
+# ======================
+
+if run_box_trades:
+    print("Running Box trades...")
+    from src.boxStrategy.runBoxes.runBoxAll import run_all_box_trades
+
+    run_all_box_trades('test1box')
+
+if run_bollinger_trades or run_turtle_trades or run_box_trades:
+    from src.helperFunctions.tradeLog.getTradeLogPath import get_full_tradelog_path
+    from src.helperFunctions.tradeLog.logInfo import update_trade_index
+    full_tradelog_path = get_full_tradelog_path()
+    update_trade_index(full_tradelog_path)
+
+# if create_non_trades:
+
 
 print("All operations completed.")

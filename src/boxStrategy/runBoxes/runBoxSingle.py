@@ -3,7 +3,7 @@ from src.boxStrategy.boxNaive import DarvasTrader
 
 
 def run_box_single():
-    box = DarvasTrader(stock_name='TSLA', identifier='testTSLAbox', time_period='Daily', reset_indexes=False, step=0)
+    box = DarvasTrader(stock_name='AAPL', identifier='testAAPLbox', time_period='Daily', reset_indexes=False, step=0)
 
     while box.step != len(box.df.index):
         state = box.get_state()
@@ -15,4 +15,4 @@ def run_box_single():
     box.save_tradelog()
 
 
-run_box_single()
+# run_box_single()

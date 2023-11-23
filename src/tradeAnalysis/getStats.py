@@ -52,6 +52,10 @@ def get_trade_stats(trades, start_date, end_date):
     min_pnl_percent_idx = trades['PnL%'].idxmin()
     max_pnl_percent_idx = trades['PnL%'].idxmax()
 
+    longest_trade_duration = trades['TradeDuration'].max()
+    shortest_trade_duration = trades['TradeDuration'].min()
+    average_trade_duration = trades['TradeDuration'].mean()
+
     # Print stats
     print(f"Start: {start_date}")
     print(f"End: {end_date}")
@@ -70,6 +74,9 @@ def get_trade_stats(trades, start_date, end_date):
     print(f"Minimum Enter Price: {trades['EnterPrice'].min()}, Index: {min_enter_price_idx}")
     print(f"Minimum PnL%: {trades['PnL%'].min()}, Index: {min_pnl_percent_idx}")
     print(f"Maximum PnL%: {trades['PnL%'].max()}, Index: {max_pnl_percent_idx}")
+    print(f"Longest Trade Duration: {longest_trade_duration}")
+    print(f"Shortest Trade Duration: {shortest_trade_duration}")
+    print(f"Average Trade Duration: {average_trade_duration}")
 
     return {
         "Start": start_date,
@@ -84,7 +91,10 @@ def get_trade_stats(trades, start_date, end_date):
         "Median Win [%]": median_win,
         "Avg. Loss [%]": avg_loss,
         "Median Loss [%]": median_loss,
-        "Total Return [%]": total_return_percent
+        "Total Return [%]": total_return_percent,
+        "Longest Trade Duration": longest_trade_duration,
+        "Shortest Trade Duration": shortest_trade_duration,
+        "Average Trade Duration": average_trade_duration
     }
 
 

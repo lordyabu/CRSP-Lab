@@ -5,6 +5,8 @@
 import json
 import os
 from pathlib import Path
+import pandas as pd
+
 def log_to_json(log_file_path, log_entries):
     """
     Appends a list of entries to a specified JSON log file, creating or resetting it if necessary.
@@ -37,3 +39,17 @@ def log_to_json(log_file_path, log_entries):
     # Write the updated log data back to the file
     with open(log_file_path, 'w') as file:
         json.dump(log_data, file, indent=4)
+
+
+
+def update_trade_index(full_tradelog_path):
+    # Load the full trade log
+    if os.path.exists(full_tradelog_path):
+        full_tradelog_df = pd.read_csv(full_tradelog_path)
+
+        # Update TradeIndex
+        full_tradelog_df.reset_index(drop=True, inplace=True)
+        full_tradelog_df['TradeIndex'] = full_tradelog_df.index + 1
+
+        # Save the updated trade log
+        full_tradelog_df.to_csv(full_tradelog_path, index=False)

@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.patches import Rectangle
 from src.config import OHLC_DATA_DIR
 
-# Function to create and plot the box within a specified range
+# Function to create and plot the boxExperimentation within a specified range
 def plot_box_slice(start_index, end_index):
     path = os.path.join(OHLC_DATA_DIR, 'GOOG.csv')
     goog = pd.read_csv(path)
