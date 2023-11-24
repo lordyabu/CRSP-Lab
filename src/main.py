@@ -13,12 +13,12 @@ do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
 do_band_calculation = False
-run_bollinger_trades = True
+run_bollinger_trades = False
 do_window_calculation = False
-run_turtle_trades = True
+run_turtle_trades = False
 do_box_calculations = False
 run_box_trades =False
-create_non_trades = False
+create_non_trades = True
 
 
 # ======================================================
@@ -142,7 +142,7 @@ if do_box_calculations:
     calculator.calculate_all_stock_boxes()
 
 # ======================
-# Running Turtle Trades
+# Running Box Trades
 # ======================
 
 if run_box_trades:
@@ -157,7 +157,27 @@ if run_bollinger_trades or run_turtle_trades or run_box_trades:
     full_tradelog_path = get_full_tradelog_path()
     update_trade_index(full_tradelog_path)
 
-# if create_non_trades:
+if create_non_trades:
+    print("Creating Non Trades...")
+    from src.nonTrades.nonTradePoints import get_non_trades
+    from src.nonTrades.nonTradeLogFunctions import update_nontrade_index, get_full_nontradelog_path
 
+    get_bollinger_non = False
+    get_turtle_non = False
+    get_box_non = True
+
+    if get_bollinger_non:
+        get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=3, short_distance=6,
+                       medium_distance=9, long_distance=12, splits=[34, 33, 33])
+
+    if get_turtle_non:
+        get_non_trades(strategy='turtle_naive', identifier='test1turtle', min_distance=3, short_distance=6,
+                       medium_distance=9, long_distance=12, splits=[34, 33, 33])
+
+    if get_box_non:
+        get_non_trades(strategy='box_naive', identifier='test1box', min_distance=3, short_distance=6,
+                       medium_distance=9, long_distance=25, splits=[34, 33, 33])
+
+    update_nontrade_index(get_full_nontradelog_path())
 
 print("All operations completed.")

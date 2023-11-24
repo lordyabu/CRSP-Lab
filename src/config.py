@@ -19,3 +19,6 @@ TURTLE_DATA_DIR = os.path.join(DATA_DIR, TURTLE_DATA_NAME)
 
 BOX_DATA_NAME = 'boxDataTst'
 BOX_DATA_DIR = os.path.join(DATA_DIR, BOX_DATA_NAME)
+
+DEEP_DATA_NAME = 'deepData'
+DEEP_DATA_PATH = os.path.join(DATA_DIR, DEEP_DATA_NAME)

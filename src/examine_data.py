@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Strategies: bollinger_naive_dynamic_sl, turtle_naive, box_naive
-trades_df = extract_trades(strategy='turtle_naive', sort_by='EndDate', trade_type='long')
+trades_df = extract_trades(strategy='box_naive', sort_by='EndDate')
 start_date = '2010-01-04'
 end_date = '2020-12-31'
 

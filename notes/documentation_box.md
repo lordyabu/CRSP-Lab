@@ -38,19 +38,19 @@ Boxes are calculated as follows
 - **Total Duration**: `4014 days`
 
 **Trading Metrics**
-- **Total Number of Trades**: `99,577`
-- **Number of Different Stocks Traded**: `888`
-- **Win Rate**: `62.90%`
+- **Total Number of Trades**: `22,129`
+- **Number of Different Stocks Traded**: `1120`
+- **Win Rate**: `39.95%`
 
 **Performance Indicators**
-- **Average Trade Return**: `0.67%`
-- **Average Win on Trades**: `5.48%`
-- **Average Loss on Trades**: `-7.54%`
-- **Maximum Trade Duration**: `160 days`
-- **Average Trade Duration**: `18 days, 22 hours, 28 minutes`
+- **Average Trade Return**: `0.244%`
+- **Average Win on Trades**: `8.85%`
+- **Average Loss on Trades**: `-5.50%`
+- **Maximum Trade Duration**: `1113 days`
+- **Average Trade Duration**: `46 days, 20 hours, 33 minutes`
 
 **Overall Returns**
-- **Total Return (Weighted Equally per Trade)**: `66,877.27%`
+- **Total Return (Weighted Equally per Trade)**: `5420.29%`
 
 
 

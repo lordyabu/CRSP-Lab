@@ -10,7 +10,7 @@ import json
 class MyTestCase(unittest.TestCase):
     def test_date_overlap_aapl(self):
         print('AAPL')
-        aapl_trades = extract_trades_auxillary(strategy='bollinger_naive_dynamic_sl', stock_name='AAPL')
+        aapl_trades = extract_trades(strategy='bollinger_naive_dynamic_sl', stock_name='AAPL')
 
         dates_trades = set(aapl_trades['StartDate'].values)
 
@@ -33,8 +33,8 @@ class MyTestCase(unittest.TestCase):
         valid_stocks = [stock.replace('.csv', '') for stock in data.get('valid_files')]
 
         for stock in tqdm(valid_stocks, desc='Processing stocks'):
-            trades = extract_trades_auxillary(strategy='your_strategy', stock_name=stock)
-            non_trades = extract_nontrades(strategy='NonTradeYourStrategy', stock_name=stock)
+            trades = extract_trades(strategy='bollinger_naive_dynamic_sl', stock_name=stock)
+            non_trades = extract_nontrades(strategy='NonTradebollinger_naive_dynamic_sl', stock_name=stock)
 
             # Convert StartDates to sets for comparison
             dates_trades = set(trades['StartDate'].values)

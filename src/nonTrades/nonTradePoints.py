@@ -136,7 +136,7 @@ def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_
             count += 1
 
 
-get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=3, short_distance=6, medium_distance=9, long_distance=12, splits=[34, 33, 33])
-get_non_trades(strategy='turtle_naive', identifier='test1turtle', min_distance=3, short_distance=6, medium_distance=9, long_distance=12, splits=[34, 33, 33])
-
-update_nontrade_index(get_full_nontradelog_path())
+# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=3, short_distance=6, medium_distance=9, long_distance=12, splits=[34, 33, 33])
+# get_non_trades(strategy='turtle_naive', identifier='test1turtle', min_distance=3, short_distance=6, medium_distance=9, long_distance=12, splits=[34, 33, 33])
+#
+# update_nontrade_index(get_full_nontradelog_path())
