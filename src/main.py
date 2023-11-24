@@ -18,7 +18,7 @@ do_window_calculation = False
 run_turtle_trades = False
 do_box_calculations = False
 run_box_trades =False
-create_non_trades = True
+create_non_trades = False
 
 
 # ======================================================
@@ -178,6 +178,8 @@ if create_non_trades:
         get_non_trades(strategy='box_naive', identifier='test1box', min_distance=3, short_distance=6,
                        medium_distance=9, long_distance=25, splits=[34, 33, 33])
 
+
     update_nontrade_index(get_full_nontradelog_path())
+
 
 print("All operations completed.")

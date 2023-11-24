@@ -4,6 +4,7 @@
 # It offers functionality to evaluate the current market state, decide on trading actions (like entering long or short positions), 
 # and process these actions through the trading period. 
 
+
 from src.helperClasses.traderBasic import StockAlgorithmDaily
 from src.config import DATA_DIR, BOLLINGER_DATA_NAME
 import os

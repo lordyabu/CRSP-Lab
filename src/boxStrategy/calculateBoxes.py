@@ -5,7 +5,7 @@ import pandas as pd
 import os
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
-from src.config import BOX_DATA_DIR
+from src.config import BOX_DATA_DIR, OHLC_DATA_DIR
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
@@ -159,7 +159,7 @@ class DarvasBoxCalculator:
         plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=30))
         plt.gcf().autofmt_xdate()
         plt.legend()
-        plt.title(f'Darvas Boxes from {start_date} to {end_date}')
+        plt.title(f'{stock_name} Darvas Boxes from {start_date} to {end_date}')
         plt.xlabel('Date')
         plt.ylabel('Price')
         plt.grid()
@@ -224,7 +224,7 @@ class DarvasBoxCalculator:
         plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=30))
         plt.gcf().autofmt_xdate()
         plt.legend()
-        plt.title(f'Darvas Boxes with Trades from {start_date} to {end_date}')
+        plt.title(f'{stock_name} Darvas Boxes with Trades from {start_date} to {end_date}')
         plt.xlabel('Date')
         plt.ylabel('Price')
         plt.grid()
@@ -263,10 +263,10 @@ class DarvasBoxCalculator:
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             list(tqdm(executor.map(self.calculate_individual_stock_boxes, filenames), total=len(filenames)))
 
-# calculator = DarvasBoxCalculator(data_directory=OHLC_DATA_DIR)
+calculator = DarvasBoxCalculator(data_directory=OHLC_DATA_DIR)
 
 # calculator.calculate_individual_stock_boxes('AAPL.csv')
 
 # calculator.calculate_all_stock_boxes()
 
-# calculator.plot_slice_stock('AAPL', '2012-01-01', '2015-12-31')
+calculator.plot_slice_stock('AAPL', '2014-01-01', '2015-12-31')

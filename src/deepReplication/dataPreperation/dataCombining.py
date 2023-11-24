@@ -51,5 +51,5 @@ def combine_data(base_name, strategy, identifier, num_prev_prices=50, drop_nans=
 
 # combine_data(base_name='deepBollinger', strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', num_prev_prices=20, drop_nans=True)
 # combine_data(base_name='deepTurtle', strategy='turtle_naive', identifier='test1turtles', num_prev_prices=20, drop_nans=True)
-combine_data(base_name='deepBox', strategy='box_naive', identifier='test1box', num_prev_prices=20, drop_nans=True)
+# combine_data(base_name='deepBox', strategy='box_naive', identifier='test1box', num_prev_prices=20, drop_nans=True)
 

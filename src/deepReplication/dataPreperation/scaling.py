@@ -44,4 +44,4 @@ def scaling(base_name, strategy, num_prev_price):
 
 # scaling(base_name='Bollinger', strategy='bollinger_naive_dynamic_sl', num_prev_price=20)
 # scaling(base_name='Turtle', strategy='turtle_naive', num_prev_price=20)
-scaling(base_name='Box', strategy='box_naive', num_prev_price=20)
+# scaling(base_name='Box', strategy='box_naive', num_prev_price=20)

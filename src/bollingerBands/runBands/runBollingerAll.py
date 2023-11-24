@@ -1,5 +1,6 @@
 from src.config import DATA_DIR
 from src.bollingerBands.bollingerNaive import BollingerNaive
+from src.bollingerBands.bollingerNaiveTwo import BollingerNaiveTwo
 import os
 import json
 from tqdm import tqdm
@@ -25,8 +26,6 @@ def run_all_bollinger_trades(identifier):
     valid_stocks = [stock.replace('.csv', '') for stock in valid_stocks]
 
     for stock in tqdm(valid_stocks, desc='Processing stocks'):
-        # if stock == 'AAPL' or stock == 'AAPL.csv':
-        #     return
 
         boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier=f'{identifier}', time_period='Daily',
                               reset_indexes=False, step=0, moving_stop_loss=True)
@@ -34,7 +33,11 @@ def run_all_bollinger_trades(identifier):
         while boll.step != len(boll.df.index):
             state = boll.get_state()
             action = boll.get_action(state)
+            # boll.process_action(action, state)
             boll.process_action(action)
             boll.update_step(boll.step + 1)
 
         boll.save_tradelog()
+
+
+run_all_bollinger_trades('test3bollinger')
