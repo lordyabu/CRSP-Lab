@@ -27,17 +27,17 @@ def run_all_bollinger_trades(identifier):
 
     for stock in tqdm(valid_stocks, desc='Processing stocks'):
 
-        boll = BollingerNaive(stock_name=f'{stock}', band_data_name='Default', identifier=f'{identifier}', time_period='Daily',
+        boll = BollingerNaiveTwo(stock_name=f'{stock}', band_data_name='Default', identifier=f'{identifier}', time_period='Daily',
                               reset_indexes=False, step=0, moving_stop_loss=True)
 
         while boll.step != len(boll.df.index):
             state = boll.get_state()
             action = boll.get_action(state)
-            # boll.process_action(action, state)
-            boll.process_action(action)
+            boll.process_action(action, state)
+            # boll.process_action(action)
             boll.update_step(boll.step + 1)
 
         boll.save_tradelog()
 
 
-run_all_bollinger_trades('test3bollinger')
+run_all_bollinger_trades('test2bollinger')

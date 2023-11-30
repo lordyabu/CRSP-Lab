@@ -5,12 +5,18 @@ import os
 import json
 import pandas as pd
 
-def combine_data(base_name, strategy, identifier, num_prev_prices=50, drop_nans=False):
+def combine_data(base_name, strategy=None, identifier=None, num_prev_prices=50, drop_nans=False, splits=None):
     non_strategy_name = f"NonTrade{strategy}"
-    non_identifier = f"NonTrade{identifier}"
+    non_identifier = f"NonTrade{identifier}_{splits}"
 
-    trades = extract_trades(strategy=strategy, identifier=identifier)
-    non_trades = extract_nontrades(strategy=non_strategy_name, identifier=non_identifier)
+    # non_identifier = 'NonTradetest1turtle'
+
+    trades = extract_trades(identifier=identifier)
+
+    print(len(trades.index))
+    non_trades = extract_nontrades(identifier=non_identifier)
+
+    print(len(non_trades.index))
 
     # Add 'is_trade' column
     trades['is_trade'] = 1
@@ -43,13 +49,15 @@ def combine_data(base_name, strategy, identifier, num_prev_prices=50, drop_nans=
     end_date = data.get('end_date')
 
     # Construct the filename and save path
-    filename = f"combined_{strategy}_{start_date}_to_{end_date}_doctest.csv"
+    filename = f"{splits}_combined_{strategy}_{start_date}_to_{end_date}_doctest_numP{num_prev_prices}.csv"
     full_deep_path = os.path.join(DATA_DIR, 'deepData', base_name, filename)
 
     # Save the combined dataframe
     combined_data.to_csv(full_deep_path, index=False)
 
-# combine_data(base_name='deepBollinger', strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', num_prev_prices=20, drop_nans=True)
-# combine_data(base_name='deepTurtle', strategy='turtle_naive', identifier='test1turtles', num_prev_prices=20, drop_nans=True)
+# combine_data(base_name='deepBollinger', identifier='test1bollinger', num_prev_prices=20, drop_nans=True)
+# combine_data(base_name='deepTurtle', strategy='turtle_naive', identifier='test1turtles',
+#              num_prev_prices=20, drop_nans=True)
+
 # combine_data(base_name='deepBox', strategy='box_naive', identifier='test1box', num_prev_prices=20, drop_nans=True)
 

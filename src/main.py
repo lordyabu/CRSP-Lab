@@ -157,6 +157,16 @@ if run_bollinger_trades or run_turtle_trades or run_box_trades:
     full_tradelog_path = get_full_tradelog_path()
     update_trade_index(full_tradelog_path)
 
+    make_individual_trade_logs = True
+
+    if make_individual_trade_logs:
+        from src.helperFunctions.dataAnalysis.extractTrades import make_individual_trade_logs
+
+        make_individual_trade_logs('test1bollinger')
+        make_individual_trade_logs('test2bollinger')
+        make_individual_trade_logs('test1turtles')
+        make_individual_trade_logs('test1box')
+
 if create_non_trades:
     print("Creating Non Trades...")
     from src.nonTrades.nonTradePoints import get_non_trades

@@ -128,7 +128,7 @@ def extract_nontrades(identifier=None, strategy=None, sort_by='EndDate', stock_n
         filter_condition |= (df['Identifier'] == identifier)
 
     # Apply strategy filter if provided
-    if strategy:
+    if strategy and not identifier:
         filter_condition |= (df['Strategy'] == strategy)
 
     # Apply the filter
@@ -171,5 +171,5 @@ def remove_non_trades(identifier):
     print(f"Non-trades with identifier '{identifier}' have been removed.")
 
 
-# identifier_to_remove = 'NonTradetest7bollinger'
+# identifier_to_remove = 'NonTradetest1bollinger_34_33_33'
 # remove_non_trades(identifier_to_remove)

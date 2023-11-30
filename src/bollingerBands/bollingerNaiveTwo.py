@@ -165,15 +165,14 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
                     action_list.append('ExitShort')
                 else:
                     action_list.append('Wait')
-        elif position_type is None:
-            if close <= lower_band:
-                action_list.append('EnterLong')
-            elif close >= upper_band:
-                action_list.append('EnterShort')
-            else:
-                action_list.append('Wait')
         else:
-            raise ValueError(f"Invalid position type {position_type}.")
+            action_list.append('Null')
+
+
+        if  close <= lower_band and action_list[0] != 'ExitLong':
+            action_list.append('EnterLong')
+        elif close >= upper_band and action_list[0] != 'ExitShort':
+            action_list.append('EnterShort')
 
         return action_list
 
@@ -192,15 +191,17 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
 
         for action in actions:
             if action == 'EnterLong':
+                assert len(self.short_units) == 0
                 buy_unit = Unit('long', curr_price, curr_date, curr_time, previous_prices)
                 self.long_units.append(buy_unit)
                 self.num_long_units_bought += 1
             elif action == 'EnterShort':
+                assert len(self.long_units) == 0
                 short_unit = Unit('short', curr_price, curr_date, curr_time, previous_prices)
                 self.short_units.append(short_unit)
                 self.num_short_units_bought += 1
             elif action == 'ExitLong':
-                assert len(self.long_units) > 0
+                assert len(self.long_units) > 0 and len(self.short_units) == 0
                 for unit in self.long_units:
                     identifier = self.identifier
                     time_period = self.time_period
@@ -224,7 +225,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
 
                 self.clear_long_positions()
             elif action == 'ExitShort':
-                assert len(self.short_units) > 0
+                assert len(self.short_units) > 0 and len(self.long_units) == 0
                 for unit in self.short_units:
                     identifier = self.identifier
                     time_period = self.time_period
@@ -247,7 +248,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
                                              exit_price=exit_price, trade_type=trade_type, leverage=leverage, previous_prices=previous_prices)
 
                 self.clear_short_positions()
-            elif action == 'Wait':
+            elif action == 'Wait' or action == "Null":
                 pass
             else:
                 raise ValueError("Invalid Action")

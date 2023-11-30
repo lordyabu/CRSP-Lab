@@ -63,10 +63,11 @@ box_trader = DarvasTrader(self, stock_name, time_period='Daily', identifier=-1, 
 
 
 
-# Boc Calculation
+# Box Calculation
 
 ## Overview
-This script defines a class `BollingerBands` for calculating and visualizing Bollinger Bands for stock trading data. Bollinger Bands are a volatility indicator that consists of a Simple Moving Average (SMA) and two standard deviation lines, one above and one below the SMA. This script provides functionality for individual stock analysis as well as batch processing of multiple stocks.
+This script defines a class `DarvasBoxCalculator` for calculating and visualizing Darvas Boxes for stock trading data. Darvas boxes are used in momentum based strategy on stocks with sharp increases in volume.
+It makes the most money off of parabolic price movement which is typically upwards. Using volume helps identify these trends quicker, but the dataset does not have this functionality so it just runs on all stocks.
 
 You can customize the timeframe / Bperiods
 
