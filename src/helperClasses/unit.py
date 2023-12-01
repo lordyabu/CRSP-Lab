@@ -17,6 +17,7 @@ class Unit:
     """
     pos_type: str  # 'long' or 'short'
     enter_price: float
+    enter_price_open: float
     start_date: str
     start_time: int
     previous_prices: list = None

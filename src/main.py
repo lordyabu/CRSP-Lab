@@ -13,7 +13,8 @@ do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
 do_band_calculation = False
-run_bollinger_trades = False
+run_bollinger_trades_one = True
+run_bollinger_trades_two = False
 do_window_calculation = False
 run_turtle_trades = False
 do_box_calculations = False
@@ -102,11 +103,17 @@ if do_band_calculation:
 # Running Bollinger Trades
 # =======================
 
-if run_bollinger_trades:
-    print("Running Bollinger Band trades...")
-    from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades
+if run_bollinger_trades_one:
+    print("Running Bollinger Band One trades...")
+    from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades_naive_one
 
-    run_all_bollinger_trades('test1bollinger')
+    run_all_bollinger_trades_naive_one('test11bollinger')
+
+if run_bollinger_trades_two:
+    print("Running Bollinger Band Two trades...")
+    from src.bollingerBands.runBands.runBollingerAll import run_all_bollinger_trades_naive_two
+
+    run_all_bollinger_trades_naive_two('test22bollinger')
 
 # ============================
 # Turtle Strategy Calculations
@@ -151,13 +158,13 @@ if run_box_trades:
 
     run_all_box_trades('test1box')
 
-if run_bollinger_trades or run_turtle_trades or run_box_trades:
+if run_bollinger_trades_one or run_bollinger_trades_two or run_turtle_trades or run_box_trades:
     from src.helperFunctions.tradeLog.getTradeLogPath import get_full_tradelog_path
     from src.helperFunctions.tradeLog.logInfo import update_trade_index
     full_tradelog_path = get_full_tradelog_path()
     update_trade_index(full_tradelog_path)
 
-    make_individual_trade_logs = True
+    make_individual_trade_logs = False
 
     if make_individual_trade_logs:
         from src.helperFunctions.dataAnalysis.extractTrades import make_individual_trade_logs

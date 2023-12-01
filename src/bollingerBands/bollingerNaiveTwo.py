@@ -5,7 +5,7 @@
 # and process these actions through the trading period.
 
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import DATA_DIR, BOLLINGER_DATA_NAME
+from src.config import DATA_DIR, BOLLINGER_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
 import os
 from src.helperClasses.unit import Unit
 
@@ -31,6 +31,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
 
         self.in_trade = False
         self.curr_price = None
+        self.next_price_open = None
         self.stop_loss_price = None
         self.leverage = 1
         self.vars = {}
@@ -82,6 +83,14 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
         curr_close = self.df.iloc[self.step]['Close']
         self.curr_price = curr_close
 
+        # Edge case on last instance of dataset
+        try:
+            next_price_open = self.df.iloc[self.step + 1]['Open']
+        except:
+            next_price_open = curr_close
+
+        self.next_price_open = next_price_open
+
         if len(self.long_units) > 0 and len(self.short_units) == 0:
             position_type = 'long'
         elif len(self.short_units) > 0 and len(self.long_units) == 0:
@@ -117,6 +126,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
         state_vars = {
             'Date': date,
             'Close': curr_close,
+            'NextPriceOpen': next_price_open,
             'LowerBand': lower_band,
             'UpperBand': upper_band,
             'MiddleBand': middle_band,
@@ -184,6 +194,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
             action_str (str): A string representing the trading action to be processed.
         """
         curr_price = state['Close']
+        next_price_open = state['NextOpenPrice']
         curr_date = state['Date']
         curr_time = 0
         previous_prices = state['PreviousPrices']
@@ -192,12 +203,12 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
         for action in actions:
             if action == 'EnterLong':
                 assert len(self.short_units) == 0
-                buy_unit = Unit('long', curr_price, curr_date, curr_time, previous_prices)
+                buy_unit = Unit('long', curr_price, next_price_open, curr_date, curr_time, previous_prices)
                 self.long_units.append(buy_unit)
                 self.num_long_units_bought += 1
             elif action == 'EnterShort':
                 assert len(self.long_units) == 0
-                short_unit = Unit('short', curr_price, curr_date, curr_time, previous_prices)
+                short_unit = Unit('short', curr_price, next_price_open, curr_date, curr_time, previous_prices)
                 self.short_units.append(short_unit)
                 self.num_short_units_bought += 1
             elif action == 'ExitLong':
@@ -212,16 +223,22 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
                     start_time = unit.start_time
                     end_time = curr_time
                     enter_price = unit.enter_price
+                    enter_price_open = unit.enter_price_open
                     exit_price = curr_price
+                    exit_price_open = next_price_open
                     trade_type = unit.pos_type
+                    transaction_cost_pct = TRANSACTION_COST_PCT + (TRANSACTION_COST_PCT / len(self.long_units))
+                    transaction_cost_dollar = TRANSACTION_COST_DOLLAR + (TRANSACTION_COST_DOLLAR / len(self.long_units))
                     leverage = self.leverage
                     previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
-                                             end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage ,previous_prices=previous_prices)
+                                             end_time=end_time, enter_price=enter_price,exit_price=exit_price,
+                                             enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                                             trade_type=trade_type, transaction_cost_pct=transaction_cost_pct,
+                                        transaction_cost_dollar=transaction_cost_dollar,leverage=leverage ,previous_prices=previous_prices)
 
                 self.clear_long_positions()
             elif action == 'ExitShort':
@@ -236,16 +253,22 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
                     start_time = unit.start_time
                     end_time = curr_time
                     enter_price = unit.enter_price
+                    enter_price_open = unit.enter_price_open
                     exit_price = curr_price
+                    exit_price_open = next_price_open
                     trade_type = unit.pos_type
+                    transaction_cost_pct = TRANSACTION_COST_PCT + (TRANSACTION_COST_PCT / len(self.short_units))
+                    transaction_cost_dollar = TRANSACTION_COST_DOLLAR + (TRANSACTION_COST_DOLLAR / len(self.short_units))
                     leverage = self.leverage
                     previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
-                                             end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage, previous_prices=previous_prices)
+                                             end_time=end_time, enter_price=enter_price,exit_price=exit_price,
+                                             enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                                             trade_type=trade_type, transaction_cost_pct=transaction_cost_pct,
+                                        transaction_cost_dollar=transaction_cost_dollar,leverage=leverage ,previous_prices=previous_prices)
 
                 self.clear_short_positions()
             elif action == 'Wait' or action == "Null":

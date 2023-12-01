@@ -6,7 +6,7 @@
 
 
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import DATA_DIR, BOLLINGER_DATA_NAME
+from src.config import DATA_DIR, BOLLINGER_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
 import os
 
 
@@ -37,6 +37,8 @@ class BollingerNaive(StockAlgorithmDaily):
         self.exit_trade_time = None
         self.enter_trade_price = None
         self.exit_trade_price = None
+        self.enter_trade_price_open = None
+        self.exit_trade_price_open = None
         self.trade_direction = None
         self.band_entry_type = None
         self.curr_price = None
@@ -47,7 +49,6 @@ class BollingerNaive(StockAlgorithmDaily):
 
         # Not being used currently for anything
         self.actions = []
-        #
 
         self.identifier = identifier
         self.time_period = time_period
@@ -211,6 +212,8 @@ class BollingerNaive(StockAlgorithmDaily):
         """
         self.in_trade = True
         self.curr_price = self.df.iloc[self.step]['Close']
+
+
         previous_prices_index = max(0, self.step - 50)
         self.previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
         self.enter_trade_date = str(self.df.iloc[self.step]["date"])
@@ -220,6 +223,12 @@ class BollingerNaive(StockAlgorithmDaily):
         else:
             self.enter_trade_time = self.step
         self.enter_trade_price = self.curr_price
+
+        # On the rare case we enter a position on the last day of the dataset
+        try:
+            self.enter_trade_price_open = self.df.iloc[self.step + 1]['Open']
+        except:
+            self.enter_trade_price_open = self.enter_trade_price
 
         if action == 'long':
             self.trade_direction = 'long'
@@ -241,6 +250,12 @@ class BollingerNaive(StockAlgorithmDaily):
         self.curr_price = self.df.iloc[self.step]['Close']
         self.exit_trade_price = self.curr_price
 
+        # On the rare case we enter a position on the last day of the dataset
+        try:
+            self.exit_trade_price_open = self.df.iloc[self.step + 1]['Open']
+        except:
+            self.exit_trade_price_open = self.exit_trade_price
+
         if self.time_period != 'Daily':
             self.exit_trade_time = '160000'
         else:
@@ -256,13 +271,18 @@ class BollingerNaive(StockAlgorithmDaily):
         end_time = self.exit_trade_time
         enter_price = self.enter_trade_price
         exit_price = self.exit_trade_price
+        enter_price_open = self.enter_trade_price_open
+        exit_price_open = self.exit_trade_price_open
         trade_type = self.trade_direction
         leverage = self.leverage
         previous_prices = self.previous_prices
 
+        # Because this trades 1 unit at a time we can calculate transaction costs below as follows
         self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
                                  start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time,
-                                 enter_price=enter_price, exit_price=exit_price, trade_type=trade_type,
+                                 enter_price=enter_price, exit_price=exit_price, enter_price_open=enter_price_open,
+                                 exit_price_open=exit_price_open,trade_type=trade_type,
+                                 transaction_cost_pct=TRANSACTION_COST_PCT * 2, transaction_cost_dollar=TRANSACTION_COST_DOLLAR * 2,
                                  leverage=leverage,
                                  previous_prices=previous_prices)
 
@@ -283,6 +303,8 @@ class BollingerNaive(StockAlgorithmDaily):
         self.exit_trade_time = None
         self.enter_trade_price = None
         self.exit_trade_price = None
+        self.enter_trade_price_open = None
+        self.exit_trade_price_open = None
         self.trade_direction = None
         self.band_entry_type = None
         self.curr_price = None

@@ -1,6 +1,6 @@
 from src.helperClasses.unit import Unit
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import OHLC_DATA_DIR, DATA_DIR
+from src.config import OHLC_DATA_DIR, DATA_DIR, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
 import json
 import os
 import pandas as pd
@@ -111,11 +111,6 @@ def get_non_trades(strategy, identifier, min_distance, short_distance, medium_di
 
 
 def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_trades, min_dist, max_dist, identifier, strategy, splits):
-    # ------------------------------------------------------------------------------ Change when exact values are picked
-    transaction_cost_pct = .2
-    transaction_cost_dollar = .1
-    # ------------------------------------------------------------------------------------------------------------------
-
     count = 0
     while count < num_trades:
         random_date = random.choice(all_dates)
@@ -142,7 +137,7 @@ def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_
                 identifier=f'NonTrade{identifier}_{splits[0]}_{splits[1]}_{splits[2]}', time_period='Daily', strategy=f'NonTrade{strategy}',
                 symbol=stock.split(".")[0], start_date=random_date, end_date='NA',
                 start_time='160000', end_time='NA', enter_price=enter_price,exit_price='NA', enter_price_open=enter_price_open, exit_price_open='NA',
-                trade_type='NA', transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,leverage=1, previous_prices=previous_prices
+                trade_type='NA', transaction_cost_pct=TRANSACTION_COST_PCT, transaction_cost_dollar=TRANSACTION_COST_DOLLAR,leverage=1, previous_prices=previous_prices
             )
 
             count += 1
