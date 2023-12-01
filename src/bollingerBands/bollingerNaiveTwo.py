@@ -126,7 +126,7 @@ class BollingerNaiveTwo(StockAlgorithmDaily):
         state_vars = {
             'Date': date,
             'Close': curr_close,
-            'NextPriceOpen': next_price_open,
+            'NextOpenPrice': next_price_open,
             'LowerBand': lower_band,
             'UpperBand': upper_band,
             'MiddleBand': middle_band,

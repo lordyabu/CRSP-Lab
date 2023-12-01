@@ -58,10 +58,10 @@ class Trade:
     @property
     def pnl(self):
         if self.trade_type == 'long':
-            return (self.exit_price - self.enter_price) * self.leverage
+            return (self.exit_price_open - self.enter_price_open) * self.leverage
         elif self.trade_type == 'short':
             # As shorts exit_price is basically a long entry
-            return (self.enter_price - self.exit_price) * self.leverage
+            return (self.enter_price_open - self.exit_price_open) * self.leverage
         else:
             raise ValueError("Trade type must be either 'long' or 'short'")
 
@@ -70,9 +70,9 @@ class Trade:
     def pnl_percent(self):
         # PnL as a percentage of the enter price
         if self.trade_type == 'long':
-            return (self.pnl / self.enter_price) * 100
+            return (self.pnl / self.enter_price_open) * 100
         elif self.trade_type == 'short':
-            return (self.pnl / self.exit_price) * 100
+            return (self.pnl / self.exit_price_open) * 100
         else:
             raise ValueError("Trade type must be either 'long' or 'short'")
 
