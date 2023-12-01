@@ -42,7 +42,11 @@ class Trade:
     end_time: int
     enter_price: float
     exit_price: float
+    enter_price_open: float
+    exit_price_open: float
     trade_type: str  # 'long' or 'short'
+    transaction_cost_pct: float
+    transaction_cost_dollar: float
     leverage: float = 1
     previous_prices: list = None
 
@@ -97,8 +101,16 @@ class Trade:
             raise TypeError("enter_price must be a number")
         if not isinstance(self.exit_price, (int, float)):
             raise TypeError(f"exit_price must be a number: {self.exit_price}")
+        if not isinstance(self.enter_price_open, (int, float)):
+            raise TypeError("enter_price_open must be a number")
+        if not isinstance(self.exit_price_open, (int, float)):
+            raise TypeError(f"exit_price_open must be a number: {self.exit_price_open}")
         if not isinstance(self.trade_type, str):
             raise TypeError("trade_type must be a string")
+        if not isinstance(self.transaction_cost_pct, (int, float)):
+            raise TypeError(f"transaction_cost_pct must be a number: {self.transaction_cost_dollar}")
+        if not isinstance(self.transaction_cost_dollar, (int, float)):
+            raise TypeError(f"transaction_cost_dollar must be a number: {self.transaction_cost_dollar}")
         if not isinstance(self.leverage, (int, float)):
             raise TypeError("leverage must be a number")
         if not isinstance(self.strategy, str):

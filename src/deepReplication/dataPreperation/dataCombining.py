@@ -49,7 +49,7 @@ def combine_data(base_name, strategy=None, identifier=None, num_prev_prices=50, 
     end_date = data.get('end_date')
 
     # Construct the filename and save path
-    filename = f"{splits}_combined_{strategy}_{start_date}_to_{end_date}_doctest_numP{num_prev_prices}.csv"
+    filename = f"{splits}_combined_{identifier}_{start_date}_to_{end_date}_doctest_numP{num_prev_prices}.csv"
     full_deep_path = os.path.join(DATA_DIR, 'deepData', base_name, filename)
 
     # Save the combined dataframe

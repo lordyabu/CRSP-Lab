@@ -111,6 +111,11 @@ def get_non_trades(strategy, identifier, min_distance, short_distance, medium_di
 
 
 def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_trades, min_dist, max_dist, identifier, strategy, splits):
+    # ------------------------------------------------------------------------------ Change when exact values are picked
+    transaction_cost_pct = .2
+    transaction_cost_dollar = .1
+    # ------------------------------------------------------------------------------------------------------------------
+
     count = 0
     while count < num_trades:
         random_date = random.choice(all_dates)
@@ -124,34 +129,41 @@ def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_
             assert not price_data.empty, "No matching date found in stock_data."
             enter_price_index = price_data.index[0]
             enter_price = price_data['PRC'].iloc[0]
+
+            # On the rare occasions it enters on the last day of the dataset use the existing closing price
+            try:
+                enter_price_open = stock_data['OPENPRC'].iloc[enter_price_index + 1]
+            except:
+                enter_price_open = enter_price
+
             previous_prices = stock_data.loc[max(0, enter_price_index - 50):enter_price_index - 1, 'PRC'].tolist()
 
             non_trade_log.add_non_trade(
                 identifier=f'NonTrade{identifier}_{splits[0]}_{splits[1]}_{splits[2]}', time_period='Daily', strategy=f'NonTrade{strategy}',
                 symbol=stock.split(".")[0], start_date=random_date, end_date='NA',
-                start_time='160000', end_time='NA', enter_price=enter_price, exit_price='NA',
-                trade_type='NA', leverage=1, previous_prices=previous_prices
+                start_time='160000', end_time='NA', enter_price=enter_price,exit_price='NA', enter_price_open=enter_price_open, exit_price_open='NA',
+                trade_type='NA', transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,leverage=1, previous_prices=previous_prices
             )
 
             count += 1
 
 
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10]) # DONE and TESTED
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED fo pre_open / doctest
+# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10]) # DONE and TESTED for for pre_open / doctest
 # get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
 # get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
 
-get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED for pre_open / doctest
 # get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
 # get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
 # get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
 
-# get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
+get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
 # get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
 # get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
 # get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
 
-# get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
+get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
 # get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
 # get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
 # get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])

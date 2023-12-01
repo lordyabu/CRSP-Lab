@@ -24,7 +24,7 @@ class TradeLog:
     trades: list = field(default_factory=list)
 
     def add_trade(self, identifier, time_period, strategy, symbol, start_date, end_date, start_time, end_time,
-                  enter_price, exit_price, trade_type, leverage=1, previous_prices=None):
+                  enter_price, exit_price, enter_price_open, exit_price_open, trade_type, transaction_cost_pct, transaction_cost_dollar,leverage=1, previous_prices=None):
         """
         Adds a new trade to the trade log.
 
@@ -42,17 +42,20 @@ class TradeLog:
             trade_type (str): Type of trade ('long' or 'short').
             leverage (float): Leverage used in the trade, defaults to 1.
             previous_prices (list, optional): Previous prices related to the trade, defaults to None.
+            :param exit_price_open:
+            :param enter_price_open:
         """
         trade = Trade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
                       start_date=start_date, end_date=end_date,
                       start_time=start_time, end_time=end_time, enter_price=enter_price, exit_price=exit_price,
-                      trade_type=trade_type,
+                      enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                      trade_type=trade_type, transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,
                       leverage=leverage, previous_prices=previous_prices)
         self.trades.append(trade)
 
 
     def add_non_trade(self, identifier, time_period, strategy, symbol, start_date, end_date, start_time, end_time,
-                  enter_price, exit_price, trade_type, leverage=1, previous_prices=None):
+                  enter_price, exit_price, enter_price_open, exit_price_open,trade_type, transaction_cost_pct, transaction_cost_dollar,leverage=1, previous_prices=None):
         """
         Adds a new non trade to the trade log.
 
@@ -74,7 +77,8 @@ class TradeLog:
         nontrade = NonTrade(identifier=identifier, time_period=time_period, strategy=strategy, symbol=symbol,
                       start_date=start_date, end_date=end_date,
                       start_time=start_time, end_time=end_time, enter_price=enter_price, exit_price=exit_price,
-                      trade_type=trade_type,
+                      enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                      trade_type=trade_type, transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,
                       leverage=leverage, previous_prices=previous_prices)
 
         self.trades.append(nontrade)
@@ -117,11 +121,15 @@ class TradeLog:
                 'EndDate': trade.end_date,
                 'EndTime': trade.end_time,
                 'EnterPrice': round(trade.enter_price, 2),
+                'EnterPriceOpen': round(trade.enter_price_open, 2),
                 'ExitPrice': round(trade.exit_price, 2),
+                'ExitPriceOpen': round(trade.exit_price_open, 2),
                 'TradeType': trade.trade_type,
                 'Leverage': trade.leverage,
                 'PnL': round(trade.pnl, 2),
-                'PnL%': round(trade.pnl_percent, 2)
+                'PnL%': round(trade.pnl_percent, 2),
+                'TransactionCost%': round(trade.transaction_cost_pct, 2),
+                'TransactionCost$': round(trade.transaction_cost_dollar, 2),
             }
 
             # Reverse the previous prices list so that PrevPrice_1 is the most recent
@@ -158,11 +166,15 @@ class TradeLog:
                 'EndDate': trade.end_date,
                 'EndTime': trade.end_time,
                 'EnterPrice': round(trade.enter_price, 2),
+                'EnterPriceOpen': round(trade.enter_price_open, 2),
                 'ExitPrice': trade.exit_price,
+                'ExitPriceOpen': trade.exit_price_open,
                 'TradeType': trade.trade_type,
                 'Leverage': trade.leverage,
                 'PnL': trade.pnl,
-                'PnL%': trade.pnl_percent
+                'PnL%': trade.pnl_percent,
+                'TransactionCost%': round(trade.transaction_cost_pct, 2),
+                'TransactionCost$': round(trade.transaction_cost_dollar, 2),
             }
 
             # Reverse the previous prices list so that PrevPrice_1 is the most recent

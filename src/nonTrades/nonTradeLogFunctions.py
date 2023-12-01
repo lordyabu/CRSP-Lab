@@ -13,7 +13,7 @@ def get_full_nontradelog_path():
     start_date = data.get('start_date')
     end_date = data.get('end_date')
 
-    filename = f"allnonTrades_{start_date}_to_{end_date}_doctest.csv"
+    filename = f"allnonTrades_{start_date}_to_{end_date}_doctest2.csv"
     full_nontradelog_path = os.path.join(DATA_DIR, 'nonTradeData', filename)
 
     return full_nontradelog_path
@@ -171,5 +171,6 @@ def remove_non_trades(identifier):
     print(f"Non-trades with identifier '{identifier}' have been removed.")
 
 
-# identifier_to_remove = 'NonTradetest1bollinger_34_33_33'
+#  Removes from file starting wil allnonTrades
+# identifier_to_remove = 'NonTradetest1turtles_34_33_33'
 # remove_non_trades(identifier_to_remove)
