@@ -1,6 +1,6 @@
 from src.helperClasses.unit import Unit
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import DATA_DIR, BOX_DATA_DIR
+from src.config import DATA_DIR, BOX_DATA_DIR, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
 import os
 import pandas as pd
 
@@ -33,6 +33,7 @@ class DarvasTrader(StockAlgorithmDaily):
         self.num_long_units_bought = 0
         self.prev_price = None
         self.curr_price = None
+        self.next_open_price = None
         self.leverage = 1
         self.vars = {}
         self.actions = []
@@ -76,6 +77,13 @@ class DarvasTrader(StockAlgorithmDaily):
         curr_price = self.df.iloc[self.step]['Close']
         self.curr_price = curr_price
 
+        try:
+            next_price_open = self.df.iloc[self.step + 1]['Open']
+        except:
+            next_price_open = curr_price
+
+        self.next_open_price = next_price_open
+
         long_units = self.long_units
         short_units = self.short_units
 
@@ -87,6 +95,7 @@ class DarvasTrader(StockAlgorithmDaily):
             'BottomBox': bottom_box,
             'PreviousPrice': prev_price,
             'CurrentPrice': curr_price,
+            'NextOpenPrice': next_price_open,
             'LongUnits': long_units,
             'ShortUnits': short_units
         }
@@ -129,10 +138,16 @@ class DarvasTrader(StockAlgorithmDaily):
         previous_prices_index = max(0, self.step - 50)
         previous_prices = self.df['Close'][previous_prices_index:self.step].tolist()
 
+
+        try:
+            next_price_open = self.df.iloc[self.step + 1]['Open']
+        except:
+            next_price_open = curr_price
+
         for action in actions:
 
             if action == 'EnterLong':
-                buy_unit = Unit('long', curr_price, curr_date, curr_time, previous_prices)
+                buy_unit = Unit('long', curr_price, next_price_open,curr_date, curr_time, previous_prices)
                 self.long_units.append(buy_unit)
                 self.num_long_units_bought += 1
             elif action == 'ExitLong':
@@ -148,15 +163,20 @@ class DarvasTrader(StockAlgorithmDaily):
                     end_time = curr_time
                     enter_price = unit.enter_price
                     exit_price = curr_price
+                    enter_price_open = unit.enter_price_open
+                    exit_price_open = next_price_open
                     trade_type = unit.pos_type
+                    transaction_cost_pct = TRANSACTION_COST_PCT + (TRANSACTION_COST_PCT / len(self.long_units))
+                    transaction_cost_dollar = TRANSACTION_COST_DOLLAR + (TRANSACTION_COST_DOLLAR / len(self.long_units))
                     leverage = self.leverage
                     previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
-                                             end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage ,previous_prices=previous_prices)
+                                             end_time=end_time, enter_price=enter_price, enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                                             exit_price=exit_price, trade_type=trade_type, transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,
+                                             leverage=leverage ,previous_prices=previous_prices)
 
                 self.clear_long_positions()
             elif action == 'Wait':

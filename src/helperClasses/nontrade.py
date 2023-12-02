@@ -94,7 +94,7 @@ class NonTrade:
             raise TypeError("trade_type must be a string")
         if not isinstance(self.transaction_cost_pct, float):
             raise TypeError(f"transaction_cost_pct must be a float")
-        if not isinstance(self.transaction_cost_dollar, float):
+        if not isinstance(self.transaction_cost_dollar, (float, int)):
             raise TypeError(f"transaction_cost_dollar must be a float")
         if not isinstance(self.leverage, (int, float)):
             raise TypeError("leverage must be a number")

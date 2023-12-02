@@ -6,7 +6,7 @@
 
 from src.helperClasses.unit import Unit
 from src.helperClasses.traderBasic import StockAlgorithmDaily
-from src.config import DATA_DIR, TURTLE_DATA_NAME
+from src.config import DATA_DIR, TURTLE_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
 import os
 import pandas as pd
 
@@ -38,6 +38,7 @@ class TurtleNaive(StockAlgorithmDaily):
         self.num_short_units_bought = 0
         self.num_long_units_bought = 0
         self.curr_price = None
+        self.next_open_price = None
         self.leverage = 1
         self.vars = {}
         self.actions = []
@@ -70,6 +71,13 @@ class TurtleNaive(StockAlgorithmDaily):
         curr_price = self.df.iloc[self.step]['Close']
         self.curr_price = curr_price
 
+        try:
+            next_open_price = self.df.iloc[self.step + 1]['Open']
+        except:
+            next_open_price = curr_price
+
+        self.next_open_price = next_open_price
+
         long_units = self.long_units
         short_units = self.short_units
 
@@ -80,6 +88,7 @@ class TurtleNaive(StockAlgorithmDaily):
             'RollingMin20': rolling_min_twenty,
             'RollingMax20': rolling_max_twenty,
             'CurrentPrice': curr_price,
+            'NextOpenPrice': next_open_price,
             'LongUnits': long_units,
             'ShortUnits': short_units
         }
@@ -139,6 +148,12 @@ class TurtleNaive(StockAlgorithmDaily):
         else:
             curr_time = self.df.iloc[self.step]['time']
 
+
+        try:
+            next_open_price = self.df.iloc[self.step + 1]['Open']
+        except:
+            next_open_price = curr_price
+
         self.actions.append(actions)
 
         previous_prices_index = max(0, self.step - 50)
@@ -147,11 +162,11 @@ class TurtleNaive(StockAlgorithmDaily):
         for action in actions:
 
             if action == 'EnterLong':
-                buy_unit = Unit('long', curr_price, curr_date, curr_time, previous_prices)
+                buy_unit = Unit('long', curr_price, next_open_price, curr_date, curr_time, previous_prices)
                 self.long_units.append(buy_unit)
                 self.num_long_units_bought += 1
             elif action == 'EnterShort':
-                short_unit = Unit('short', curr_price, curr_date, curr_time, previous_prices)
+                short_unit = Unit('short', curr_price, next_open_price, curr_date, curr_time, previous_prices)
                 self.short_units.append(short_unit)
                 self.num_short_units_bought += 1
             elif action == 'ExitLong':
@@ -167,15 +182,20 @@ class TurtleNaive(StockAlgorithmDaily):
                     end_time = curr_time
                     enter_price = unit.enter_price
                     exit_price = curr_price
+                    enter_price_open = unit.enter_price_open
+                    exit_price_open = next_open_price
                     trade_type = unit.pos_type
+                    transaction_cost_pct = TRANSACTION_COST_PCT + (TRANSACTION_COST_PCT / len(self.long_units))
+                    transaction_cost_dollar = TRANSACTION_COST_DOLLAR + (TRANSACTION_COST_DOLLAR / len(self.long_units))
                     leverage = self.leverage
                     previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
-                                             end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage ,previous_prices=previous_prices)
+                                             end_time=end_time, enter_price=enter_price, enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                                             exit_price=exit_price, trade_type=trade_type, transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,
+                                             leverage=leverage ,previous_prices=previous_prices)
 
                 self.clear_long_positions()
             elif action == 'ExitShort':
@@ -190,16 +210,21 @@ class TurtleNaive(StockAlgorithmDaily):
                     start_time = unit.start_time
                     end_time = curr_time
                     enter_price = unit.enter_price
+                    enter_price_open = unit.enter_price_open
                     exit_price = curr_price
+                    exit_price_open = next_open_price
                     trade_type = unit.pos_type
+                    transaction_cost_pct = TRANSACTION_COST_PCT + (TRANSACTION_COST_PCT / len(self.short_units))
+                    transaction_cost_dollar = TRANSACTION_COST_DOLLAR + (TRANSACTION_COST_DOLLAR / len(self.short_units))
                     leverage = self.leverage
                     previous_prices = unit.previous_prices
 
                     self.trade_log.add_trade(identifier=identifier, time_period=time_period, strategy=strategy,
                                              symbol=symbol,
                                              start_date=start_date, end_date=end_date, start_time=start_time,
-                                             end_time=end_time, enter_price=enter_price,
-                                             exit_price=exit_price, trade_type=trade_type, leverage=leverage, previous_prices=previous_prices)
+                                             end_time=end_time, enter_price=enter_price,exit_price=exit_price,
+                                             enter_price_open=enter_price_open, exit_price_open=exit_price_open,
+                                             trade_type=trade_type, transaction_cost_pct=transaction_cost_pct, transaction_cost_dollar=transaction_cost_dollar,leverage=leverage, previous_prices=previous_prices)
 
                 self.clear_short_positions()
             elif action == 'Wait':

@@ -143,24 +143,29 @@ def process_non_trades(stock, trades, all_dates, stock_data, non_trade_log, num_
             count += 1
 
 
-get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED fo pre_open / doctest
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10]) # DONE and TESTED for for pre_open / doctest
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test1bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test11bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED fo pre_open / doctest, 2
 
-get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED for pre_open / doctest
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
-# get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test2bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test22bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED for pre_open / doctest, 2
 
-get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
-# get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
-# get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
-# get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED for pre_open / doctest2
 
-get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33])
-# get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
-# get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
-# get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[34, 33, 33]) # DONE and TESTED for pre_open / doctest2
+
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test11bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10]) # DONE and TESTED for for pre_open / doctest
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test11bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test11bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test22bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test22bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
+get_non_trades(strategy='bollinger_naive_dynamic_sl', identifier='test22bollinger', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+
+get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
+get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
+get_non_trades(strategy='turtle_naive', identifier='test1turtles', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
+
+
+get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[80, 10, 10])
+get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 80, 10])
+get_non_trades(strategy='box_naive', identifier='test1box', min_distance=1, short_distance=3, medium_distance=5, long_distance=10, splits=[10, 10, 80])
 
 update_nontrade_index(get_full_nontradelog_path())

@@ -6,6 +6,11 @@ import json
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
+
+
+#ToDo
+
+#Change doctest2 back to whatever I'm going to use
 def scaling(base_name, identifier, num_prev_price, splits):
     json_file_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
     with open(json_file_path, 'r') as json_file:
@@ -14,7 +19,7 @@ def scaling(base_name, identifier, num_prev_price, splits):
     end_date = data.get('end_date')
 
     # Construct the filename and save path
-    filename = f"{splits}_combined_{identifier}_{start_date}_to_{end_date}_doctest_numP{num_prev_price}.csv"
+    filename = f"{splits}_combined_{identifier}_{start_date}_to_{end_date}_doctest2_numP{num_prev_price}.csv"
     full_deep_path = os.path.join(DATA_DIR, 'deepData', f'deep{base_name}',filename)
 
     # Read the CSV file with low_memory=False
@@ -36,7 +41,7 @@ def scaling(base_name, identifier, num_prev_price, splits):
         # if count > 10:
         #     break
     # print(df.iloc[0])
-    filename_save = f"{splits}_scaled_combined_{identifier}_{start_date}_to_{end_date}_doctest_numP{num_prev_price}.csv"
+    filename_save = f"{splits}_scaled_combined_{identifier}_{start_date}_to_{end_date}_doctest2_numP{num_prev_price}.csv"
     full_deepsave_path = os.path.join(DATA_DIR, 'deepData', f'deep{base_name}', filename_save)
 
     df.to_csv(full_deepsave_path, index=False)

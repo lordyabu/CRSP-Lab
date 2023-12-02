@@ -13,12 +13,12 @@ do_major_ops = False
 do_ohlc_calculations = False
 select_date_range = False
 do_band_calculation = False
-run_bollinger_trades_one = True
+run_bollinger_trades_one = False
 run_bollinger_trades_two = False
 do_window_calculation = False
 run_turtle_trades = False
 do_box_calculations = False
-run_box_trades =False
+run_box_trades = False
 create_non_trades = False
 
 
@@ -158,19 +158,21 @@ if run_box_trades:
 
     run_all_box_trades('test1box')
 
+
+
 if run_bollinger_trades_one or run_bollinger_trades_two or run_turtle_trades or run_box_trades:
     from src.helperFunctions.tradeLog.getTradeLogPath import get_full_tradelog_path
     from src.helperFunctions.tradeLog.logInfo import update_trade_index
     full_tradelog_path = get_full_tradelog_path()
     update_trade_index(full_tradelog_path)
 
-    make_individual_trade_logs = False
+    make_individual_trade_logs = True
 
     if make_individual_trade_logs:
         from src.helperFunctions.dataAnalysis.extractTrades import make_individual_trade_logs
 
-        make_individual_trade_logs('test1bollinger')
-        make_individual_trade_logs('test2bollinger')
+        make_individual_trade_logs('test11bollinger')
+        make_individual_trade_logs('test22bollinger')
         make_individual_trade_logs('test1turtles')
         make_individual_trade_logs('test1box')
 

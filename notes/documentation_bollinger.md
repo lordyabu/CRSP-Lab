@@ -34,7 +34,30 @@ Bands are calculated as follows (Bperiods = 19 -> N = 20)
 - Lower Band 3 Standard Deviations (LB3SD): `LB3SD = MB - (2.96 * SD)`
 
 
-## Trade Analysis Results Summary(Dynamic SL)
+## Trade Analysis Results Summary(Dynamic SL; Enter/Exit at open; Not factoring in trade costs) 
+
+
+**Analysis Period**
+- **Start Date**: `2010-01-04`
+- **End Date**: `2020-12-31`
+- **Total Duration**: `4014 days`
+
+**Trading Metrics**
+- **Total Number of Trades**: `125,554`
+- **Number of Different Stocks Traded**: `1120`
+- **Win Rate**: `62.21%`
+
+**Performance Indicators**
+- **Average Trade Return**: `0.595%`
+- **Average Win on Trades**: `5.09%`
+- **Average Loss on Trades**: `-6.86%`
+- **Maximum Trade Duration**: `170 days`
+- **Average Trade Duration**: `18 days, 22 hours, 55 minutes`
+
+**Overall Returns**
+- **Total Return (Weighted Equally per Trade)**: `74743.49%`
+
+## Trade Analysis Results Summary(Dynamic SL; Enter/Exit at close; Not factoring in trade costs) 
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`
