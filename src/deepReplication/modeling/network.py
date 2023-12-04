@@ -6,7 +6,7 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
 
-bollinger_path = os.path.join(DEEP_DATA_PATH, 'deepBollinger', 'scaled_combined_bollinger_naive_dynamic_sl_20100104_to_20201231_doctest.csv')
+bollinger_path = os.path.join(DEEP_DATA_PATH, 'modeling', 'scaled_combined_bollinger_naive_dynamic_sl_20100104_to_20201231_doctest.csv')
 
 df = pd.read_csv(bollinger_path)
 

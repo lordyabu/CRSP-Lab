@@ -25,9 +25,10 @@ def get_trade_stats(trades, start_date, end_date):
     Returns:
         dict: A dictionary containing calculated trade statistics.
     """
-    # Calculate durations
+    # Filter trades by date range
     trades = trades[(trades['EndDate'] >= start_date) & (trades['EndDate'] <= end_date)]
 
+    # Calculate durations
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']
 
     # Calculate stats
@@ -51,10 +52,17 @@ def get_trade_stats(trades, start_date, end_date):
     min_enter_price_idx = trades['EnterPrice'].idxmin()
     min_pnl_percent_idx = trades['PnL%'].idxmin()
     max_pnl_percent_idx = trades['PnL%'].idxmax()
-
     longest_trade_duration = trades['TradeDuration'].max()
     shortest_trade_duration = trades['TradeDuration'].min()
     average_trade_duration = trades['TradeDuration'].mean()
+
+    # Calculate stats including transaction costs
+    total_transaction_cost_percent = trades['TransactionCost%'].sum()
+    avg_trade_with_transaction_cost = (total_return_percent - total_transaction_cost_percent) / total_trades
+    avg_win_with_transaction_cost = (avg_win * len(winning_trades) - total_transaction_cost_percent) / len(winning_trades)
+    avg_loss_with_transaction_cost = (avg_loss * len(losing_trades) - total_transaction_cost_percent) / len(losing_trades)
+    median_win_with_transaction_cost = median_win - (total_transaction_cost_percent / len(winning_trades))
+    median_loss_with_transaction_cost = median_loss - (total_transaction_cost_percent / len(losing_trades))
 
     # Print stats
     print(f"Start: {start_date}")
@@ -64,12 +72,18 @@ def get_trade_stats(trades, start_date, end_date):
     print(f"# Different Stocks: {unique_stocks}")
     print(f"Win Rate [%]: {win_rate}")
     print(f"Avg. Trade [%]: {avg_trade}")
+    print(f"Avg. Trade [%] (including Transaction Cost): {avg_trade_with_transaction_cost}")
     print(f"Median Trade [%]: {median_trade}")
     print(f"Avg. Win [%]: {avg_win}")
+    print(f"Avg. Win [%] (including Transaction Cost): {avg_win_with_transaction_cost}")
     print(f"Median Win [%]: {median_win}")
+    print(f"Median Win [%] (including Transaction Cost): {median_win_with_transaction_cost}")
     print(f"Avg. Loss [%]: {avg_loss}")
+    print(f"Avg. Loss [%] (including Transaction Cost): {avg_loss_with_transaction_cost}")
     print(f"Median Loss [%]: {median_loss}")
+    print(f"Median Loss [%] (including Transaction Cost): {median_loss_with_transaction_cost}")
     print(f"Total Return [%] (Where every trade is weighted equally): {total_return_percent}")
+    print(f"Total Return [%] (including Transaction Cost): {total_return_percent - total_transaction_cost_percent}")
     print(f"Minimum Exit Price: {trades['ExitPrice'].min()}, Index: {min_exit_price_idx}")
     print(f"Minimum Enter Price: {trades['EnterPrice'].min()}, Index: {min_enter_price_idx}")
     print(f"Minimum PnL%: {trades['PnL%'].min()}, Index: {min_pnl_percent_idx}")
@@ -86,16 +100,23 @@ def get_trade_stats(trades, start_date, end_date):
         "# Different Stocks": unique_stocks,
         "Win Rate [%]": win_rate,
         "Avg. Trade [%]": avg_trade,
+        "Avg. Trade [%] (including Transaction Cost)": avg_trade_with_transaction_cost,
         "Median Trade [%]": median_trade,
         "Avg. Win [%]": avg_win,
+        "Avg. Win [%] (including Transaction Cost)": avg_win_with_transaction_cost,
         "Median Win [%]": median_win,
+        "Median Win [%] (including Transaction Cost)": median_win_with_transaction_cost,
         "Avg. Loss [%]": avg_loss,
+        "Avg. Loss [%] (including Transaction Cost)": avg_loss_with_transaction_cost,
         "Median Loss [%]": median_loss,
+        "Median Loss [%] (including Transaction Cost)": median_loss_with_transaction_cost,
         "Total Return [%]": total_return_percent,
+        "Total Return [%] (including Transaction Cost)": total_return_percent - total_transaction_cost_percent,
         "Longest Trade Duration": longest_trade_duration,
         "Shortest Trade Duration": shortest_trade_duration,
         "Average Trade Duration": average_trade_duration
     }
+
 
 
 def plot_wins_and_losses(trades, start_date, end_date):

@@ -31,7 +31,7 @@ Boxes are calculated as follows
 - A close below the bottom of the box is the sell signal. Exit and then go back to step 1.
 
 
-## Trade Analysis Results Summary(Dynamic SL) (OUTDATED - Will update soon)
+## Trade Analysis Results Summary(Enter/Exit at open; Not factoring in trade costs)
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`
@@ -41,17 +41,40 @@ Boxes are calculated as follows
 **Trading Metrics**
 - **Total Number of Trades**: `22,129`
 - **Number of Different Stocks Traded**: `1120`
-- **Win Rate**: `39.95%`
+- **Win Rate**: `40.25%`
 
 **Performance Indicators**
-- **Average Trade Return**: `0.244%`
-- **Average Win on Trades**: `8.85%`
-- **Average Loss on Trades**: `-5.50%`
+- **Average Trade Return**: `.25%`
+- **Average Win on Trades**: `8.83%`
+- **Average Loss on Trades**: `-5.54%`
 - **Maximum Trade Duration**: `1113 days`
 - **Average Trade Duration**: `46 days, 20 hours, 33 minutes`
 
 **Overall Returns**
-- **Total Return (Weighted Equally per Trade)**: `5420.29%`
+- **Total Return (Weighted Equally per Trade)**: `5590.63%`
+
+
+## Trade Analysis Results Summary(Enter/Exit at open; Factoring in trade costs)
+
+**Analysis Period**
+- **Start Date**: `2010-01-04`
+- **End Date**: `2020-12-31`
+- **Total Duration**: `4014 days`
+
+**Trading Metrics**
+- **Total Number of Trades**: `22,129`
+- **Number of Different Stocks Traded**: `1120`
+- **Win Rate**: `40.25%`
+
+**Performance Indicators**
+- **Average Trade Return**: `-.04%`
+- **Average Win on Trades**: `8.09%`
+- **Average Loss on Trades**: `-6.04%`
+- **Maximum Trade Duration**: `1113 days`
+- **Average Trade Duration**: `46 days, 20 hours, 33 minutes`
+
+**Overall Returns**
+- **Total Return (Weighted Equally per Trade)**: `-989.55%`
 
 
 

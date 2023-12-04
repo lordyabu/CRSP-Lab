@@ -20,10 +20,8 @@ def combine_data(base_name, strategy=None, identifier=None, num_prev_prices=50, 
 
     trades = extract_trades(identifier=identifier)
 
-    print(len(trades.index))
     non_trades = extract_nontrades(identifier=non_identifier)
 
-    print(len(non_trades.index))
 
     # Add 'is_trade' column
     trades['is_trade'] = 1
@@ -60,9 +58,10 @@ def combine_data(base_name, strategy=None, identifier=None, num_prev_prices=50, 
     full_deep_path = os.path.join(DATA_DIR, 'deepData', base_name, filename)
 
     # Save the combined dataframe
+    combined_data = combined_data.sort_values(by='StartDate')
     combined_data.to_csv(full_deep_path, index=False)
 
-# combine_data(base_name='deepBollinger', identifier='test1bollinger', num_prev_prices=20, drop_nans=True)
+# combine_data(base_name='modeling', identifier='test1bollinger', num_prev_prices=20, drop_nans=True)
 # combine_data(base_name='deepTurtle', strategy='turtle_naive', identifier='test1turtles',
 #              num_prev_prices=20, drop_nans=True)
 

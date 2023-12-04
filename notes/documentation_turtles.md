@@ -28,7 +28,7 @@ Entry based on 20-day highs or lows.
 Exit on 10-day highs or lows, opposite to the entry condition.
 
 
-## Trade Analysis Results Summary(Dynamic SL; Enter/Exit on Open; Not factoring in trade costs)
+## Trade Analysis Results Summary(Enter/Exit on Open; Not factoring in trade costs)
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`
@@ -51,7 +51,30 @@ Exit on 10-day highs or lows, opposite to the entry condition.
 - **Total Return (Weighted Equally per Trade)**: `91839.57%`
 
 
-## Trade Analysis Results Summary(Dynamic SL; Enter/Exit on Close; Not factoring in trade costs)
+## Trade Analysis Results Summary(Enter/Exit on Open; Factoring in trade costs)
+
+**Analysis Period**
+- **Start Date**: `2010-01-04`
+- **End Date**: `2020-12-31`
+- **Total Duration**: `4014 days`
+
+**Trading Metrics**
+- **Total Number of Units Traded(not the same as number of trades)**: `424,456`
+- **Number of Different Stocks Traded**: `1120`
+- **Win Rate**: `34.92%`
+
+**Performance Indicators**
+- **Average Trade Return**: `-.03%`
+- **Average Win on Trades**: `10.79%`
+- **Average Loss on Trades**: `-6.24%`
+- **Maximum Trade Duration**: `362 days`
+- **Average Trade Duration**: `33 days, 55 minutes`
+
+**Overall Returns**
+- **Total Return (Weighted Equally per Trade)**: `-13,469.67%`
+
+
+## Trade Analysis Results Summary(Enter/Exit on Close; Not factoring in trade costs)
 
 **Analysis Period**
 - **Start Date**: `2010-01-04`

@@ -78,4 +78,4 @@ def graph_window_bollinger(start_date, end_date, stock, strategy, identifier):
 # Usage example
 start_date = pd.to_datetime('2010-01-10')
 end_date = pd.to_datetime('2010-12-02')
-graph_window_bollinger(start_date, end_date, 'GOOG', strategy=None, identifier='test2bollinger')
+graph_window_bollinger(start_date, end_date, 'GOOG', strategy=None, identifier='test22bollinger')

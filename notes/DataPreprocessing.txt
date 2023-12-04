@@ -26,3 +26,24 @@ Currently, there are 2 major operations SHOWN ABOVE
 
 1. Currently, using 5-min returns to calculate OHLC.
 
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                       Non-Trades                                                     ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+0. Non-trades are points of data in which a trade entry does not occur. They are calculated as followed.
+
+1. Pick what strategy to generate non-trades for
+2. Loop over every stock and generate an equal number of non-trades as there are trades for that stock
+    a. Specify distances from trades and the splits in which to do. E.X. dist=(min=1, low=3, med=5, max=8), splits=(34, 33, 33)
+        - This means a third of the non-trades will be between 1 and 3 days away inclusive, a third will be between 3 and 5
+          days away inclusive, and the last third will be between 5 and 8 days away inclusive
+
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                   Naive Classification                                               ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
