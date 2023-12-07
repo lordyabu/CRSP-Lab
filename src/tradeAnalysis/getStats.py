@@ -26,7 +26,7 @@ def get_trade_stats(trades, start_date, end_date):
         dict: A dictionary containing calculated trade statistics.
     """
     # Filter trades by date range
-    trades = trades[(trades['EndDate'] >= start_date) & (trades['EndDate'] <= end_date)]
+    trades = trades[(trades['StartDate'] >= start_date) & (trades['StartDate'] <= end_date)]
 
     # Calculate durations
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']

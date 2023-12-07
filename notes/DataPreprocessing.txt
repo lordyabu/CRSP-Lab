@@ -29,6 +29,18 @@ Currently, there are 2 major operations SHOWN ABOVE
 
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                Picking Stocks to Study                                               ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+1. Currently, out of the 10040 stocks this is only using 1120
+
+2. They are chosen after applying the MO above
+
+3. Then only stocks that have all values from 2010-01-04 to 2020-12-31 are chosen, leaving a total of 1120
+
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                       Non-Trades                                                     ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
@@ -46,4 +58,10 @@ Currently, there are 2 major operations SHOWN ABOVE
 ║                                                   Naive Classification                                               ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
+1. For Bollinger / Box if
 
+Current scaled price > .95 or price < .05 then classify as 1
+
+2. For Turtle
+
+If Current scaled price == 1 or price == 0 then classify as 1

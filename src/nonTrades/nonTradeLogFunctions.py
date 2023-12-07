@@ -174,3 +174,7 @@ def remove_non_trades(identifier):
 #  Removes from file starting wil allnonTrades
 # identifier_to_remove = 'NonTradetest1turtles_34_33_33'
 # remove_non_trades(identifier_to_remove)
+
+df = extract_nontrades('NonTradetest11bollinger_34_33_33', sort_by='Symbol')
+
+df.to_csv('tstnt.csv')

@@ -3,18 +3,19 @@
 # Key functionalities include extracting trade data, getting trade statistics, plotting wins and losses,
 # and visualizing trade data for Bollinger Bands and Turtle trading strategies within specified time windows.
 
-from src.tradeAnalysis.getStats import get_trade_stats
-from src.helperFunctions.dataAnalysis.extractTrades import extract_trades, extract_trades_auxillary
+from src.tradeAnalysis.getStats import get_trade_stats, plot_wins_and_losses
+from src.helperFunctions.dataAnalysis.extractTrades import extract_trades, extract_trades_auxillary, extract_ml_trades
+from src.tradeAnalysis.getGraphs import plot_everything
 
 import warnings
 warnings.filterwarnings('ignore')
 
 # Strategies: bollinger_naive_dynamic_sl, turtle_naive, box_naive
-trades_df = extract_trades(sort_by='EndDate', identifier='test1box', trade_type='long')
+trades_df = extract_trades(sort_by='EndDate', identifier='test1turtles')
 
-
-start_date = '2010-01-04'
-end_date = '2020-12-31'
+trades_df.to_csv('tst.csv')
+start_date = '20181010'
+end_date = '20201231'
 
 # Analysis and Visualization Section
 # -----------------------------------
@@ -29,7 +30,7 @@ get_trade_stats(trades_df, start_date, end_date)
 
 # Plot wins and losses
 # Uncomment the line below to execute
-# plot_wins_and_losses(trades_df, start_date, end_date)
+# plot_everything(trades_df, start_date, end_date)
 
 # Bollinger Bands Analysis
 # ------------------------

@@ -33,7 +33,7 @@ def recall(y_true, y_pred, threshold=0.5):
 def naive_model(X_test, y_test):
     preds = []
     for x in X_test:
-        if float(x[0]) == 1  or float(x[0]) == 0:
+        if float(x[0]) > .95  or float(x[0]) < .05:
             preds.append(1)
         else:
             preds.append(0)
@@ -47,7 +47,7 @@ def naive_model(X_test, y_test):
     specificity = tn / (tn + fp) if tn + fp != 0 else 0
     recall = tp / (tp + fn) if tp + fn != 0 else 0  # Added recall calculation
 
-    return accuracy, precision, specificity, recall
+    return [accuracy, precision, specificity, recall], preds
 
 
 def neural_network(X_train, y_train, X_test, y_test):
@@ -74,6 +74,9 @@ def neural_network(X_train, y_train, X_test, y_test):
     results_train = model.evaluate(X_train, y_train)
     results_test = model.evaluate(X_test, y_test)
 
+    y_preds_pre = model.predict(X_test)
+    y_preds = [1 if pred >= 0.5 else 0 for pred in y_preds_pre]
+
     loss_train = results_train[0]
     accuracy_train = results_train[1]
     precision_train = results_train[2]
@@ -86,7 +89,7 @@ def neural_network(X_train, y_train, X_test, y_test):
     specificity_test = results_test[3]
     recall_test = results_test[4]
 
-    return accuracy_train, precision_train, specificity_train, recall_train, accuracy_test, precision_test, specificity_test, recall_test, loss_train, loss_test
+    return [accuracy_train, precision_train, specificity_train, recall_train, accuracy_test, precision_test, specificity_test, recall_test, loss_train, loss_test], y_preds
 
 
 
@@ -114,7 +117,7 @@ def naive_bayes(X_train, y_train, X_test, y_test):
     specificity = tn / (tn + fp)
 
     # Displaying the metrics
-    return accuracy, precision, specificity, recall
+    return [accuracy, precision, specificity, recall], y_pred
 
 
 
@@ -124,7 +127,7 @@ def polynomial_log_reg(X_train, y_train, X_test, y_test):
     X_test_poly = poly.transform(X_test)
 
     # Create a logistic regression classifier
-    log_reg = LogisticRegression(max_iter=10000)
+    log_reg = LogisticRegression(max_iter=1000)
 
     # Train the model using the training sets with polynomial features
     log_reg.fit(X_train_poly, y_train)
@@ -146,13 +149,13 @@ def polynomial_log_reg(X_train, y_train, X_test, y_test):
     tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
     specificity = tn / (tn + fp)
 
-    return accuracy, precision, specificity, recall
+    return [accuracy, precision, specificity, recall], y_pred
 
 
 def knn(X_train, y_train, X_test, y_test):
 
     # Create a K-NN classifier. You can change 'n_neighbors' to optimize performance
-    knn = KNeighborsClassifier(n_neighbors=20)
+    knn = KNeighborsClassifier(n_neighbors=5)
 
     # Train the model using the training sets
     knn.fit(X_train, y_train)
@@ -174,12 +177,12 @@ def knn(X_train, y_train, X_test, y_test):
     specificity = tn / (tn + fp)
 
     # Displaying the metrics
-    return accuracy, precision, specificity, recall
+    return [accuracy, precision, specificity, recall], y_pred
 
 
 def rfc(X_train, y_train, X_test, y_test):
     # Create a Random Forest classifier
-    rf = RandomForestClassifier(n_estimators=1000)  # n_estimators is the number of trees in the forest
+    rf = RandomForestClassifier(n_estimators=100)  # n_estimators is the number of trees in the forest
 
     # Train the model using the training sets
     rf.fit(X_train, y_train)
@@ -202,20 +205,21 @@ def rfc(X_train, y_train, X_test, y_test):
     specificity = tn / (tn + fp)
 
     # Displaying the metrics
-    return accuracy, precision, specificity, recall
+    return [accuracy, precision, specificity, recall], y_pred
 
 
 def run_all_splits():
     all_results = []
 
     num_prev_prices = 20
-    running_data_preprocesings = ["Bollinger", "Bollinger", "Turtle", "Box"]
+    running_data_preprocesings = ["Bollinger1", "Bollinger2", "Turtle", "Box"]
     identifiers = ['test11bollinger', 'test22bollinger', 'test1turtles', 'test1box']
 
-    splits_to_do = ["34_33_33", "80_10_10", "10_80_10", "10_10_80"]
+    splits_to_do = ["34_33_33","80_10_10", "10_80_10", "10_10_80"]
 
     for i, val in enumerate(running_data_preprocesings):
         running_data_preprocesing = running_data_preprocesings[i]
+        running_data_preprocesing = ''.join([char for char in running_data_preprocesing if not char.isdigit()])
         identifier = identifiers[i]
         for split_to_do in splits_to_do:
             print(f"Doing {split_to_do}, {identifier}")
@@ -225,33 +229,67 @@ def run_all_splits():
 
                 df = pd.read_csv(path, low_memory=False)
 
+                # Include StartDate in X
+                # X = df[[f'PrevPrice_{i}' for i in range(num_prev_prices + 1)] + ['StartDate']].values
                 X = df[[f'PrevPrice_{i}' for i in range(num_prev_prices + 1)]].values
                 y = df['is_trade'].values
 
                 # Train-test split
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False, random_state=42)
 
+                # series_train = pd.Series(y_train)
+                # series = pd.Series(y_test)
+                # trade_counts_train = series_train.value_counts()
+                # trade_counts = series.value_counts()
+                # print(trade_counts_train,trade_counts)
+                #
+                # # Separate StartDate from features in train and test sets
+                # X_train_features = X_train[:, :-1]
+                # X_train_dates = X_train[:, -1]
+                #
+                # X_test_features = X_test[:, :-1]
+                # X_test_dates = X_test[:, -1]
+                #
+                # print(X_train_dates[0], X_train_dates[-1],X_test_dates[0], X_test_dates[-1])
+
                 # Running each model
-                # nn_vals = neural_network(X_train, y_train, X_test, y_test)
-                naive_vals = naive_model(X_test, y_test)
-                # naive_bayes_vals = naive_bayes(X_train, y_train, X_test, y_test)
-                # log_vals = polynomial_log_reg(X_train, y_train, X_test, y_test)
-                # knn_vals = knn(X_train, y_train, X_test, y_test)
-                # rfc_vals = rfc(X_train, y_train, X_test, y_test)
+                nn_vals, nn_predictions = neural_network(X_train, y_train, X_test, y_test)
+                naive_vals, naive_predictions = naive_model(X_test, y_test)
+                naive_bayes_vals, naive_bayes_predictions = naive_bayes(X_train, y_train, X_test, y_test)
+                log_vals, log_predictions = polynomial_log_reg(X_train, y_train, X_test, y_test)
+                knn_vals, knn_predictions = knn(X_train, y_train, X_test, y_test)
+                rfc_vals, rfc_predictions = rfc(X_train, y_train, X_test, y_test)
 
                 # Collecting results
-                # all_results.append(['NN', split_to_do, identifier, *nn_vals[:4], *nn_vals[4:8], nn_vals[8], nn_vals[9]])
+                all_results.append(['NN', split_to_do, identifier, *nn_vals[:4], *nn_vals[4:8], nn_vals[8], nn_vals[9]])
                 all_results.append(['Naive', split_to_do, identifier, '', '', '', '', *naive_vals, '', ''])
-                # all_results.append(['Naive Bayes', split_to_do, identifier, '', '', '', '', *naive_bayes_vals, '', ''])
-                # all_results.append(['Log Reg', split_to_do, identifier, '', '', '', '', *log_vals, '', ''])
-                # all_results.append(['KNN', split_to_do, identifier, '', '', '', '', *knn_vals, '', ''])
-                # all_results.append(['RFC', split_to_do, identifier, '', '', '', '', *rfc_vals, '', ''])
+                all_results.append(['Naive Bayes', split_to_do, identifier, '', '', '', '', *naive_bayes_vals, '', ''])
+                all_results.append(['Log Reg', split_to_do, identifier, '', '', '', '', *log_vals, '', ''])
+                all_results.append(['KNN', split_to_do, identifier, '', '', '', '', *knn_vals, '', ''])
+                all_results.append(['RFC', split_to_do, identifier, '', '', '', '', *rfc_vals, '', ''])
+
+                models = ['NN', 'Naive', 'Naive Bayes', 'Log Reg', 'KNN', 'RFC']
+                predictions = [nn_predictions, naive_predictions, naive_bayes_predictions, log_predictions,
+                               knn_predictions, rfc_predictions]
+
+                X_test_dates = df['StartDate'].values[-len(X_test):]
+                X_test_stocks = df['Symbol'].values[-len(X_test):]
+
+                for model_name, model_predictions in zip(models, predictions):
+                    prediction_df = pd.DataFrame({
+                        'Date': X_test_dates,
+                        'Stock': X_test_stocks,
+                        'Prediction': model_predictions,
+                        'Actual': y_test  # Adding the actual values
+                    })
+                    prediction_df.to_csv(f'./ml{val}Data/{model_name}_predictions_{identifier}_{split_to_do}.csv', index=False)
+
 
             except Exception as e:
                 print(f"Error occurred: {e}")
                 # Play a beep sound
                 frequency = 2500  # Set Frequency in Hertz
-                duration = 10000  # Set Duration in milliseconds (1000 ms = 1 second)
+                duration = 1000  # Set Duration in milliseconds (1000 ms = 1 second)
                 winsound.Beep(frequency, duration)
 
     # Displaying the results
@@ -268,7 +306,7 @@ def run_all_splits():
     results_df.to_csv('model_comparison_results.csv', index=False)
 
     frequency = 500  # Set Frequency in Hertz
-    duration = 10000  # Set Duration in milliseconds (1000 ms = 1 second)
+    duration = 1000  # Set Duration in milliseconds (1000 ms = 1 second)
     winsound.Beep(frequency, duration)
 
 run_all_splits()

@@ -1,5 +1,6 @@
 # Algorithm Notes
 
+
 ## Bollinger Naive 1
 ![Screenshot (59)](https://github.com/lordyabu/CRSP-Lab/assets/92772420/ff30db69-fe24-4ef5-bfdb-f6987384d991)
 ![Screenshot (60)](https://github.com/lordyabu/CRSP-Lab/assets/92772420/7a509e6b-034f-4c43-b144-a78ab60c796b)
