@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.helperClasses.unit import Unit
 from src.helperClasses.traderBasic import MLStockAlgorithmDaily
-from src.config import DATA_DIR, TURTLE_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
+from src.config import DATA_DIR, TURTLE_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR, DEEP_PREDICTION_TURTLE
 import os
 import pandas as pd
 
@@ -69,7 +69,9 @@ class MLTurtleNaive(MLStockAlgorithmDaily):
         # Initialize the superclass
         super().__init__(stock_name = stock_name, folder_name=TURTLE_DATA_NAME,reset_indexes = reset_indexes, step = step)
 
-        self.ml_trade_df = pd.read_csv(r'C:\Users\theal\PycharmProjects\ensembleLegends\src\deepReplication\modeling\mlTurtleData\{}_predictions_test1turtles_{}.csv'.format(ml_to_use, split_to_do))
+        turtle_ml_path = os.path.join(DEEP_PREDICTION_TURTLE, '{}_predictions_test1turtles_{}.csv'.format(ml_to_use, split_to_do))
+
+        self.ml_trade_df = pd.read_csv(turtle_ml_path)
 
 
 

@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 from src.helperClasses.traderBasic import MLStockAlgorithmDaily
-from src.config import DATA_DIR, BOLLINGER_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR
+from src.config import DATA_DIR, BOLLINGER_DATA_NAME, TRANSACTION_COST_PCT, TRANSACTION_COST_DOLLAR, DEEP_PREDICTION_BOLLINGER_ONE
 import os
 import pandas as pd
 
@@ -66,7 +66,9 @@ class MLBollingerNaive(MLStockAlgorithmDaily):
 
         super().__init__(stock_name=stock_name, folder_name=BOLLINGER_DATA_NAME, reset_indexes=reset_indexes, step=step)
 
-        self.ml_trade_df = pd.read_csv(r'C:\Users\theal\PycharmProjects\ensembleLegends\src\deepReplication\modeling\mlBollinger1Data\{}_predictions_test11bollinger_{}.csv'.format(ml_to_use, split_to_do))
+        bollinger_one_path = os.path.join(DEEP_PREDICTION_BOLLINGER_ONE, '{}_predictions_test11bollinger_{}.csv'.format(ml_to_use, split_to_do))
+
+        self.ml_trade_df = pd.read_csv(bollinger_one_path)
 
         self.in_trade = False
         self.enter_trade_date = None

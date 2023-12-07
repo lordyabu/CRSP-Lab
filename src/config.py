@@ -25,3 +25,8 @@ DEEP_DATA_PATH = os.path.join(DATA_DIR, DEEP_DATA_NAME)
 
 TRANSACTION_COST_PCT = .2
 TRANSACTION_COST_DOLLAR = 5
+
+
+
+DEEP_PREDICTION_TURTLE = os.path.join(DATA_DIR, DEEP_DATA_NAME, 'deepPredictions', 'mlTurtleData')
+DEEP_PREDICTION_BOLLINGER_ONE = os.path.join(DATA_DIR, DEEP_DATA_NAME, 'deepPredictions', 'mlBollinger1Data')
