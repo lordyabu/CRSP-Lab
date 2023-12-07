@@ -36,7 +36,7 @@ def run_turtle_trade_for_stock(stock, identifier, ml_to_use, split_to_do):
 
 
 def run_all_turtle_trades(identifier):
-    split_to_do = "34_33_33"
+    splits_to_do = ["34_33_33", "80_10_10", "10_80_10", "10_10_80"]
     mls_to_use = ["Naive","Naive Bayes", "Log Reg", "KNN", "RFC", "NN"]
 
     json_file_path = os.path.join(DATA_DIR, 'helperData', 'valid_stock_filenames.json')
@@ -48,12 +48,13 @@ def run_all_turtle_trades(identifier):
     valid_stocks = [stock.replace('.csv', '') for stock in valid_stocks]
 
     for ml_to_use in mls_to_use:
-        print(f"Running analysis with {ml_to_use}")
+        for split_to_do in splits_to_do:
+            print(f"Running analysis with {ml_to_use}, {splits_to_do}")
 
-        for stock in tqdm(valid_stocks, desc=f"Processing with {ml_to_use}"):
-            run_turtle_trade_for_stock(stock, identifier, ml_to_use, split_to_do)
+            for stock in tqdm(valid_stocks, desc=f"Processing with {ml_to_use}"):
+                run_turtle_trade_for_stock(stock, identifier, ml_to_use, split_to_do)
 
-        print(f"Completed analysis with {ml_to_use}")
+            print(f"Completed analysis with {ml_to_use}")
 
 if __name__ == '__main__':
     run_all_turtle_trades('test1mlturtles')

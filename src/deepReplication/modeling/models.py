@@ -309,4 +309,4 @@ def run_all_splits():
     duration = 1000  # Set Duration in milliseconds (1000 ms = 1 second)
     winsound.Beep(frequency, duration)
 
-run_all_splits()
+# run_all_splits()

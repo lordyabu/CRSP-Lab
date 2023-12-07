@@ -13,7 +13,7 @@ from src.config import DATA_DIR
 import os
 
 
-def get_trade_stats(trades, start_date, end_date):
+def get_trade_stats(trades, start_date, end_date, selection_type='EndDate'):
     """
     Calculates various statistics for a given set of trades within a specified date range.
 
@@ -26,7 +26,7 @@ def get_trade_stats(trades, start_date, end_date):
         dict: A dictionary containing calculated trade statistics.
     """
     # Filter trades by date range
-    trades = trades[(trades['StartDate'] >= start_date) & (trades['StartDate'] <= end_date)]
+    trades = trades[(trades[selection_type] >= start_date) & (trades[selection_type] <= end_date)]
 
     # Calculate durations
     trades['TradeDuration'] = trades['EndDate'] - trades['StartDate']
@@ -118,6 +118,53 @@ def get_trade_stats(trades, start_date, end_date):
     }
 
 
+def get_trade_stats_cost_filter(trades, start_date, end_date, selection_type='EndDate', include_costs=False):
+    """
+    Calculates various statistics for a given set of trades within a specified date range,
+    optionally including transaction costs.
+    """
+    filtered_trades = trades[(trades[selection_type] >= start_date) & (trades[selection_type] <= end_date)]
+
+    # Calculate the trade duration in days
+    filtered_trades['TradeDuration'] = (filtered_trades['EndDate'] - filtered_trades['StartDate']).dt.days
+
+    total_trades = len(filtered_trades)
+    unique_stocks = filtered_trades['Symbol'].nunique()
+    winning_trades = filtered_trades[filtered_trades['PnL%'] > 0]
+    losing_trades = filtered_trades[filtered_trades['PnL%'] < 0]
+    win_rate = (len(winning_trades) / total_trades) * 100 if total_trades > 0 else 0
+    avg_win = winning_trades['PnL%'].mean() if not winning_trades.empty else 0
+    avg_loss = losing_trades['PnL%'].mean() if not losing_trades.empty else 0
+    total_return_percent = filtered_trades['PnL%'].sum()
+
+    # Calculate stats including transaction costs
+    if include_costs:
+        total_transaction_cost_percent = filtered_trades['TransactionCost%'].sum()
+        avg_win_with_transaction_cost = (avg_win * len(winning_trades) - total_transaction_cost_percent) / len(winning_trades) if len(winning_trades) > 0 else 0
+        avg_loss_with_transaction_cost = (avg_loss * len(losing_trades) - total_transaction_cost_percent) / len(losing_trades) if len(losing_trades) > 0 else 0
+        avg_win = avg_win_with_transaction_cost
+        avg_loss = avg_loss_with_transaction_cost
+        total_return_percent -= total_transaction_cost_percent
+
+    # Assembling the stats dictionary
+    stats = {
+        "Total Units Traded": total_trades,
+        "Different Stocks": unique_stocks,
+        "Win Rate": f"{round(win_rate, 2)}%",
+        "Avg. Trade Return": f"{round(total_return_percent / total_trades if total_trades > 0 else 0, 2)}%",
+        "Avg. Win on Trades": f"{round(avg_win, 2)}%",
+        "Avg. Loss on Trades": f"{round(avg_loss, 2)}%",
+        "Max Trade Duration": f"{filtered_trades['TradeDuration'].max()} days",
+        "Avg. Trade Duration": f"{round(filtered_trades['TradeDuration'].mean(), 2)} days",
+        "Total Return": f"{round(total_return_percent, 2)}%"
+    }
+
+    return stats
+
+
+
+
+
 
 def plot_wins_and_losses(trades, start_date, end_date):
     """
@@ -193,3 +240,39 @@ def rank_stocks_by_pnl(identifier, start_date, end_date):
     # Rank stocks by 'Total Return [%]'
     ranked_stocks = stats_df.sort_values(by='Total Return [%]', ascending=False)
     return ranked_stocks
+
+
+import pandas as pd
+
+def create_excel_report(identifier):
+    # Extract trade data
+    overall_trades = extract_trades(sort_by='EndDate', identifier=identifier)
+    long_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='long')
+    short_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='short')
+
+    # Define date range
+    start_date = '20181001'
+    end_date = '20201231'
+
+    # Prepare a DataFrame to store all stats
+    all_stats = []
+
+    # Get statistics for each trade type and for each cost scenario
+    for trade_type, trades in [('Overall', overall_trades), ('Long', long_trades), ('Short', short_trades)]:
+        for cost_label, include_costs in [('Without Costs', False), ('With Costs', True)]:
+            stats = get_trade_stats_cost_filter(trades, start_date, end_date, include_costs=include_costs, selection_type='StartDate')
+            stats['Trade Type'] = trade_type
+            stats['Cost Scenario'] = cost_label
+            all_stats.append(stats)
+
+    # Combine all stats into a single DataFrame
+    combined_df = pd.DataFrame(all_stats)
+
+    # Reorder columns to put 'Trade Type' first
+    column_order = ['Trade Type', 'Cost Scenario'] + [col for col in combined_df if col not in ['Trade Type', 'Cost Scenario']]
+    combined_df = combined_df[column_order]
+
+    # Write to Excel
+    combined_df.to_excel(f"{identifier}_combined_trade_stats.xlsx", index=False)
+
+create_excel_report("test1turtles")

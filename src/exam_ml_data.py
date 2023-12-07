@@ -1,7 +1,5 @@
-# This script is designed to analyze and visualize trading strategies, focusing on 'bollinger_naive_dynamic_sl' and 'turtle_naive'.
-# It utilizes various functions for extracting trades, plotting comprehensive analyses, and graphing specific trading windows.
-# Key functionalities include extracting trade data, getting trade statistics, plotting wins and losses,
-# and visualizing trade data for Bollinger Bands and Turtle trading strategies within specified time windows.
+# This script is designed to analyze and visualize trading strategies, focusing on the ML trades
+# See examine_data for a more complete description as this is essentially a replica.
 
 from src.tradeAnalysis.getStats import get_trade_stats, plot_wins_and_losses
 from src.helperFunctions.dataAnalysis.extractTrades import extract_trades, extract_trades_auxillary, extract_ml_trades
@@ -27,7 +25,7 @@ end_date = '20201231'
 
 # Get and print trade statistics
 # Uncomment the line below to execute
-get_trade_stats(trades_df, start_date, end_date)
+get_trade_stats(trades_df, start_date, end_date, selection_type='EndDate')
 
 # Plot wins and losses
 # Uncomment the line below to execute

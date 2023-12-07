@@ -1,8 +1,16 @@
-# This script features the BollingerNaive class, an extension of the StockAlgorithmDaily class, designed to implement a Bollinger Band-based trading strategy.
-# The class encapsulates the logic for making trading decisions based on Bollinger Bands, handling the entry and exit of trades,
-# updating the strategy's state, and processing actions for each step in the trading data.
-# It offers functionality to evaluate the current market state, decide on trading actions (like entering long or short positions),
-# and process these actions through the trading period.
+# MLBollingerNaive Class Description:
+# -----------------------------------
+# The MLBollingerNaive class extends StockAlgorithmDaily to implement a Bollinger Band-based trading strategy enhanced with machine learning.
+# It handles trading decisions and actions based on Bollinger Bands and ML model predictions. Key features include:
+# - Integrating Bollinger Bands with ML algorithms for trading decisions.
+# - Managing trade entries and exits based on combined Bollinger and ML signals.
+# - Utilizing ML predictions to refine strategy rules and improve trade performance.
+# - Processing trading actions step-by-step through the market data.
+# - Assessing the strategy's performance for specific stocks with ML integration.
+#
+# The class is tailored for exploring the effectiveness of Bollinger Bands in conjunction with machine learning in stock market trading.
+
+
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
@@ -62,6 +70,8 @@ class MLBollingerNaive(MLStockAlgorithmDaily):
             reset_indexes (bool): Whether to reset DataFrame indexes. Defaults to False.
             step (int): Initial step or time period in the trading data. Defaults to 0.
             moving_stop_loss (bool): Flag to use moving stop-loss. Defaults to True.
+            ml_to_use (str): Which ML strategy to use.
+            split_to_do (str): Which Split to use.
         """
 
         super().__init__(stock_name=stock_name, folder_name=BOLLINGER_DATA_NAME, reset_indexes=reset_indexes, step=step)
@@ -147,7 +157,7 @@ class MLBollingerNaive(MLStockAlgorithmDaily):
             stop_loss_price = None
             target_price = None
 
-        print(date,trade_action, actual_result)
+        # print(date,trade_action, actual_result)
 
         state_vars = {
             'Date': date,
@@ -222,9 +232,9 @@ class MLBollingerNaive(MLStockAlgorithmDaily):
                     action_str = "EnterLong"
                 else:
 
-                    print(curr_state['Date'], curr_state['TradeAction'], curr_state['CurrentPrice'], previous_prices_2d, scaled_prices)
+                    # print(curr_state['Date'], curr_state['TradeAction'], curr_state['Close'], previous_prices_2d, scaled_prices)
                     # raise ValueError("Theoretically probably shouldn't trade here")
-                    print("Theoretically probably shouldn't trade here")
+                    # print("Theoretically probably shouldn't trade here")
                     action_str = "Wait"
             else:
                 action_str = "Wait"

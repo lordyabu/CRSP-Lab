@@ -23,12 +23,15 @@ def plot_cumulative_returns(trades):
     # Sort the DataFrame by 'EndDate' in ascending order
     trades = trades.sort_values(by='EndDate')
 
-    # Calculate the cumulative sum of 'PnL%' at each timestamp
-    trades['CumulativeReturn'] = trades['PnL%'].cumsum()
+    # Aggregate PnL% by EndDate
+    daily_returns = trades.groupby('EndDate')['PnL%'].sum()
+    # Calculate the cumulative sum of aggregated daily returns
+    cumulative_returns = daily_returns.cumsum()
 
+    print(cumulative_returns[-1], cumulative_returns[0])
     # Plot the cumulative returns
     plt.figure(figsize=(14, 7))
-    plt.plot(trades['EndDate'], trades['CumulativeReturn'])
+    plt.plot(cumulative_returns.index, cumulative_returns)
     plt.title('Cumulative Realized Returns Over Time')
     plt.xlabel('Time')
     plt.ylabel('Cumulative Return')

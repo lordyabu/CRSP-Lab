@@ -11,10 +11,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Strategies: bollinger_naive_dynamic_sl, turtle_naive, box_naive
-trades_df = extract_trades(sort_by='EndDate', identifier='test1turtles')
+trades_df = extract_trades(sort_by='EndDate', identifier='test1turtles', trade_type='long')
 
-trades_df.to_csv('tst.csv')
-start_date = '20181010'
+# trades_df.to_csv('tst.csv')
+start_date = '20181001'
+# start_date = '20100104'
 end_date = '20201231'
 
 # Analysis and Visualization Section
@@ -26,11 +27,11 @@ end_date = '20201231'
 
 # Get and print trade statistics
 # Uncomment the line below to execute
-get_trade_stats(trades_df, start_date, end_date)
+get_trade_stats(trades_df, start_date, end_date, selection_type='StartDate')
 
 # Plot wins and losses
 # Uncomment the line below to execute
-# plot_everything(trades_df, start_date, end_date)
+plot_everything(trades_df, start_date, end_date)
 
 # Bollinger Bands Analysis
 # ------------------------

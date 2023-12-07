@@ -38,7 +38,7 @@ def get_full_tradelog_path():
 
 def get_full_ml_tradelog_path():
     """
-    Constructs the full path for a trade log file based on the start and end dates stored in a JSON file.
+    Constructs the full path for a trade log file based on the start and end dates stored in a JSON file for ML trades.
 
     This function reads a JSON file containing metadata about valid stock filenames, extracts the start and end dates,
     and then constructs a filename for a trade log. The filename is formed by appending the start and end dates to a base string.
@@ -57,7 +57,7 @@ def get_full_ml_tradelog_path():
     end_date = data.get('end_date')
 
     # Construct the filename with the start and end dates
-    filename = f"tst_ML_allTrades_{start_date}_to_{end_date}_doctest2.csv"
+    filename = f"Turt_ML_allTrades_{start_date}_to_{end_date}_doctest2.csv"
     full_tradelog_path = os.path.join(DATA_DIR, 'tradeData', filename)
 
     return full_tradelog_path

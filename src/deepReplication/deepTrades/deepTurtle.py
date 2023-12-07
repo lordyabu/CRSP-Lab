@@ -1,8 +1,15 @@
-# The MLTurtleNaive class, extending StockAlgorithmDaily, implements a simplified Turtle trading strategy for stock markets.
-# It manages trading positions, decision-making based on market state, and execution of trading actions in line with the Turtle strategy.
-# Key features include tracking and updating long and short positions, determining trade actions based on rolling window calculations,
-# processing these actions, and maintaining a step-wise approach through the trading dataset.
-# The class is designed to simulate and analyze the Turtle trading strategy's performance for specific stocks over time.
+# MLTurtleNaive Class Description:
+# --------------------------------
+# The MLTurtleNaive class extends MLStockAlgorithmDaily to implement a Turtle trading strategy with machine learning enhancements.
+# It manages positions and trading decisions based on market data and ML insights. Key features include:
+# - Combining Turtle strategy with ML predictions for decision-making.
+# - Managing and updating long and short positions.
+# - Determining trade actions using rolling window calculations and ML models.
+# - Processing actions and maintaining a step-wise progression through the dataset.
+# - Evaluating the Turtle strategy's performance with ML enhancements for specific stocks.
+#
+# This class is designed for simulating and analyzing the Turtle strategy's efficacy when augmented with machine learning.
+
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
@@ -64,6 +71,8 @@ class MLTurtleNaive(MLStockAlgorithmDaily):
             time_period (str): The time period for trading (e.g., 'Daily'). Defaults to 'Daily'.
             reset_indexes (bool): Whether to reset DataFrame indexes. Defaults to False.
             step (int): Initial step or time period in the trading data. Defaults to 0.
+            ml_to_use (str): Which ML strategy to use.
+            split_to_do (str): Which Split to use.
         """
 
         # Initialize the superclass
@@ -176,9 +185,9 @@ class MLTurtleNaive(MLStockAlgorithmDaily):
                 action_list.append('EnterShort')
             else:
 
-                print(state['Date'] ,state['TradeAction'], state['CurrentPrice'],previous_prices_2d, scaled_prices)
+                # print(state['Date'] ,state['TradeAction'], state['CurrentPrice'],previous_prices_2d, scaled_prices)
                 # raise ValueError("Theoretically probably shouldn't trade here")
-                print("Theoretically probably shouldn't trade here")
+                # print("Theoretically probably shouldn't trade here")
                 action_list.append("Wait")
 
         if state['CurrentPrice'] > state['RollingMax10']:
