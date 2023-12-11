@@ -11,11 +11,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Strategies: bollinger_naive_dynamic_sl, turtle_naive, box_naive
-trades_df = extract_trades(sort_by='EndDate', identifier='test1turtles', trade_type='long')
+trades_df = extract_trades(sort_by='EndDate', identifier='test22bollinger', trade_type='short')
 
 # trades_df.to_csv('tst.csv')
-start_date = '20181001'
+start_date = '20100101'
 # start_date = '20100104'
+# end_date = '20200101'
 end_date = '20201231'
 
 # Analysis and Visualization Section

@@ -28,7 +28,6 @@ def plot_cumulative_returns(trades):
     # Calculate the cumulative sum of aggregated daily returns
     cumulative_returns = daily_returns.cumsum()
 
-    print(cumulative_returns[-1], cumulative_returns[0])
     # Plot the cumulative returns
     plt.figure(figsize=(14, 7))
     plt.plot(cumulative_returns.index, cumulative_returns)
@@ -76,7 +75,7 @@ def plot_cumulative_returns_and_trades(trades):
     ax1.legend(loc='upper left')
     ax2.legend(loc='upper right')
 
-    plt.title('Cumulative Realized Returns and Cumulative Number of Realized Trades Over Time')
+    plt.title('Bollinger 2 Cumulative Realized Short Returns and Cumulative Number of Realized Trades Over Time')
     plt.show()
 
 

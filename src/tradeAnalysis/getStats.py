@@ -4,7 +4,7 @@
 # 'rank_stocks_by_pnl' ranks stocks based on their profitability, assisting in identifying the most and least successful stocks in a trading strategy.
 
 
-from src.helperFunctions.dataAnalysis.extractTrades import extract_trades
+from src.helperFunctions.dataAnalysis.extractTrades import extract_trades, extract_ml_trades
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
@@ -242,16 +242,21 @@ def rank_stocks_by_pnl(identifier, start_date, end_date):
     return ranked_stocks
 
 
-import pandas as pd
-
-def create_excel_report(identifier):
+def create_excel_report(identifier, ml_to_use = None, split_to_use = None):
     # Extract trade data
-    overall_trades = extract_trades(sort_by='EndDate', identifier=identifier)
-    long_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='long')
-    short_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='short')
+    if not ml_to_use and not split_to_use:
+        overall_trades = extract_trades(sort_by='EndDate', identifier=identifier)
+        long_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='long')
+        short_trades = extract_trades(sort_by='EndDate', identifier=identifier, trade_type='short')
+    else:
+        identifier = f"{ml_to_use}_{split_to_use}_{identifier}"
+        overall_trades = extract_ml_trades(sort_by='EndDate', identifier=identifier)
+        long_trades = extract_ml_trades(sort_by='EndDate', identifier=identifier, trade_type='long')
+        short_trades = extract_ml_trades(sort_by='EndDate', identifier=identifier, trade_type='short')
 
     # Define date range
     start_date = '20181001'
+    # end_date = '20200101'
     end_date = '20201231'
 
     # Prepare a DataFrame to store all stats
@@ -275,4 +280,11 @@ def create_excel_report(identifier):
     # Write to Excel
     combined_df.to_excel(f"{identifier}_combined_trade_stats.xlsx", index=False)
 
-create_excel_report("test1turtles")
+if __name__ == "__main__":
+    # create_excel_report("test1mlturtles", ml_to_use='NN', split_to_use='34_33_33')
+    # create_excel_report('test1mlbollinger11', ml_to_use='NN', split_to_use='34_33_33')
+    # create_excel_report('test1mlbollinger22', ml_to_use='NN', split_to_use='34_33_33')
+    create_excel_report('test1turtles')
+#, ml_to_use='Naive', split_to_use='34_33_33'
+
+    # Trades: 82509, 60.9, .417

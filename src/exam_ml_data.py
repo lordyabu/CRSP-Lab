@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Strategies: bollinger_naive_dynamic_sl, turtle_naive, box_naive
-trades_df = extract_ml_trades(sort_by='EndDate', identifier='NN_34_33_33_test1mlturtles')
+trades_df = extract_ml_trades(sort_by='EndDate', identifier='Naive Bayes_34_33_33_test1mlbollinger22', trade_type='long')
 
 
 
@@ -21,7 +21,7 @@ end_date = '20201231'
 
 # Plot various graphs for the trading strategy
 # Uncomment the line below to execute
-#plot_everything(trades_df, start_date, end_date)
+plot_everything(trades_df, start_date, end_date)
 
 # Get and print trade statistics
 # Uncomment the line below to execute
